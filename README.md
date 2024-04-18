@@ -246,4 +246,5 @@ label start:
 
 ## Notes:
 - use shift+R to refresh the game after editing code
+- shift+D for developer menu
 - display is 1080x1920

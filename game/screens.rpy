@@ -139,6 +139,7 @@ style window:
     ysize gui.textbox_height #new #v
     # yminimum 200
     # ymaximum 500 #^
+    ymaximum 1080 #new #?
 
     background Image("gui/textbox.png", xalign=0.5, yalign=1.0)
 
@@ -1354,6 +1355,37 @@ screen nvl_dialogue(dialogue):
                     id d.what_id
 
 
+
+
+screen nvl_narration(dialogue, items=None):
+
+    window:
+        style "nvl_narration"
+
+        has vbox:
+            spacing gui.nvl_spacing
+
+        ## Displays dialogue in either a vpgrid or the vbox.
+        if gui.nvl_height:
+
+            vpgrid:
+                cols 1
+                yinitial 1.0
+
+                use nvl_dialogue(dialogue)
+
+        else:
+
+            use nvl_dialogue(dialogue)
+
+        ## Displays the menu, if given. The menu may be displayed incorrectly if
+        ## config.narrator_menu is set to True.
+        for i in items:
+
+            textbutton i.caption:
+                action i.action
+                style "nvl_button"
+
 ## This controls the maximum number of NVL-mode entries that can be displayed at
 ## once.
 define config.nvl_list_length = gui.nvl_list_length
@@ -1367,11 +1399,20 @@ style nvl_dialogue is say_dialogue
 style nvl_button is button
 style nvl_button_text is button_text
 
+style nvl_narration is default
+
+style nvl_narration:
+    xfill True
+    yfill True
+
+    background None
+    padding gui.nvl_borders.padding
+
 style nvl_window:
     xfill True
     yfill True
 
-    background "gui/nvl.png"
+    background None #"gui/nvl.png" #new
     padding gui.nvl_borders.padding
 
 style nvl_entry:
