@@ -1,5 +1,13 @@
-.vscode/
+# .vscode/
+ignore/
+
+
+*.save
+game/cache/
 
 errors.txt
 log.txt
 traceback.txt
+
+
+example_code.svg
