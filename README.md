@@ -248,3 +248,7 @@ label start:
 - use shift+R to refresh the game after editing code
 - shift+D for developer menu
 - display is 1080x1920
+
+## Image sources:
+- [bg wood](https://images.app.goo.gl/e7D5cbBJv4g1iQfw7)
+- [bg desk](https://www.canadianunderwriter.ca/insurance/what-happened-to-the-ex-broker-who-claimed-he-was-a-ce-instructor-but-wasnt-1004194769/)

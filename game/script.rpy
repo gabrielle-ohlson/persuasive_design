@@ -12,10 +12,15 @@ define p = Character("Professor")
 # https://www.renpy.org/doc/html/style_properties.html
 # define n = Character(None, kind=nvl, what_xpos=360, what_ypos=0, what_xsize=1170, screen="nvl_narration") #, what_prefix="{cps=25}", what_suffix="{/cps}", ctc="ctc_anchored", ctc_position="fixed")
 
-define n = Character(None, kind=nvl, what_xpos=360, what_ypos=0, what_xsize=1170, what_xalign=0.0, what_color="#000000") #, what_prefix="{cps=25}", what_suffix="{/cps}", ctc="ctc_anchored", ctc_position="fixed")
+# width of nvl is 1205
 
+# 352+17
+define n = Character(None, kind=nvl, what_xpos=410, what_ypos=0, what_xsize=1105, what_xalign=0.0, what_color="#000000") #, what_prefix="{cps=25}", what_suffix="{/cps}", ctc="ctc_anchored", ctc_position="fixed")
 
-define n_bg = Character(None, kind=nvl, what_xpos=360, what_ypos=0, what_xsize=1170, what_xalign=0.0, window_background="gui/nvl.png") #, what_prefix="{cps=25}", what_suffix="{/cps}", ctc="ctc_anchored", ctc_position="fixed")
+# 358+52 (52 width margin)
+define n_bg = Character(None, kind=nvl, what_xpos=410, what_ypos=0, what_xsize=1105, what_xalign=0.0, window_background="gui/nvl.png")
+
+# define n_bg = Character(None, kind=nvl, what_xpos=390, what_ypos=0, what_xsize=1170, what_xalign=0.0, window_background="gui/nvl.png") #, what_prefix="{cps=25}", what_suffix="{/cps}", ctc="ctc_anchored", ctc_position="fixed")
 
 # # top narrator
 # define nt = Character(None, kind=nvl, what_xpos=360, what_xsize=1170, what_ypos=50, window_background="gui/textbox.png") #, window_background=None) 
@@ -23,8 +28,114 @@ define n_bg = Character(None, kind=nvl, what_xpos=360, what_ypos=0, what_xsize=1
 # define narrator = nvl_narrator
 # define menu = nvl_menu
 
+
+image bg black = "#000000"
+image bg white = "#ffffff"
+
+style bg_white is default
+
+style bg_white:
+    xfill True
+    yfill True
+    # background None #"gui/nvl.png" #new
+    
+    background "bg white"
+    padding gui.nvl_borders.padding
+
+init python:
+    if persistent.endings is None:
+        persistent.endings = set()
+
+    def merge_endings(old, new, current):
+        current.update(old)
+        current.update(new)
+        return current
+
+    renpy.register_persistent('endings', merge_endings)
+
+init python:
+    achievement.register("test4", stat_max=4) #`stat_max`: number of times a condition must be met before the achievement is granted
+
+
+screen achievements: #TODO: figure out what to do with this
+
+    # The background of the main menu.
+    window:
+        style "bg_white"
+    
+    grid 2 2:
+        # if achievement.has("test"):
+        #     image test_icon_granted
+        # else:
+        #     image test_icon_notgranted
+        #
+        if achievement.has("test"):
+            text "You got the Test Achievement!"
+        else:
+            text "Get this achievement by playing the game"
+
+        # if achievement.has("test4"):
+        #     image test_icon_granted
+        # else:
+        #     image test_icon_notgranted
+        #
+        if achievement.has("test4"):
+            text "You got the Test4 Achievement!"
+        else:
+            text "Get this achievement by clicking 4 times"
+
 # The game starts here with the built-in `start` label:
 label start:
+    show bg black
+
+    $ achievement.grant("test")
+    "I'm granting an achievement"
+
+    if achievement.has("test"): #shows that achievement works
+        "And it worked!"
+    else:
+        "But that didn't work."
+    
+    # clear all of the user's achievements:
+    $ achievement.clear_all()
+
+    if not achievement.has("test4"):
+        $ achievement.clear("test4") # remove a specific achievement
+
+    $ test_clicks = 0
+    # default persistent.test_clicks = 0 #if want it to be persistent through playthroughs
+    "Click this 4 times for another achievement"
+
+    menu loop:
+        "Click!":
+            $ test_clicks += 1
+            # $ persistent.test_clicks += 1 #if want it to be persistent through playthroughs
+            $ achievement.progress("test4", test_clicks)
+            $ achievement.sync()
+            $ progress = achievement.get_progress("test4")
+            if progress == 1:
+                "You've clicked this [progress] time."
+            else:
+                "You've clicked this [progress] times."
+            if progress < 4:
+                jump loop
+        "No":
+            pass
+
+    if achievement.has("test4"):
+        "You got the achievement!"
+    else:
+        "You did not get the achievement."
+
+    window hide
+    show screen achievements #as A
+    pause
+    hide screen achievements # hide screen A
+
+    # clear all of the user's achievements:
+    $ achievement.clear_all()
+
+    #================================
     # Here we use the `default` statement to initialize a flag containing information about a choice the player has made.  The `win` flag starts off initialized to the special value `False` (as with the rest of Ren'Py, capitalization matters), meaning that it is not set. If certain paths are chosen, we can set it to `True` using a Python assignment statement.
     default win = False
 
@@ -60,7 +171,6 @@ label start:
 
     nvl clear
 
-    # source: https://www.canadianunderwriter.ca/insurance/what-happened-to-the-ex-broker-who-claimed-he-was-a-ce-instructor-but-wasnt-1004194769/
     scene bg desk
 
     # The menu statement introduces an in-game choice. It takes an indented block of lines, each consisting of a string followed by a colon. These are the menu choices that are presented to the player. Each menu choice takes its own indented block of lines, which is run when that menu choices is chosen.

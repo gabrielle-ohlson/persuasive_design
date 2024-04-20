@@ -1412,7 +1412,7 @@ style nvl_window:
     xfill True
     yfill True
 
-    background None #"gui/nvl.png" #new
+    background "bg wood" # None #"gui/nvl.png" #new
     padding gui.nvl_borders.padding
 
 style nvl_entry:
