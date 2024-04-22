@@ -229,9 +229,6 @@ label start:
     ]) with fade
 
     # $ renpy.notify("teach: " + str(teach)) #remove #debug
-    
-    $ narrate("Thanks for answering! Let's begin.", bg="paper_desk composite")
-    $ clear()
 
     # =====
 
@@ -260,6 +257,8 @@ label start:
 
     # $ renpy.notify("teach: " + str(teach)) #remove #debug
     
+    $ narrate("Thanks for answering! Let's begin.", bg="paper_desk composite")
+    $ clear()
 
     # =====
     # show bg black
