@@ -75,6 +75,13 @@ Labels may be defined in any file that is in the game directory, and ends with .
 - [Supporting Flags using the Default, Python and If Statements](https://www.renpy.org/doc/html/quickstart.html#supporting-flags-using-the-default-python-and-if-statements) (*Main articles: [Python Statements](https://www.renpy.org/doc/html/python.html) and [Conditional Statements](https://www.renpy.org/doc/html/conditional.html)*)
 - [Releasing Your Game](https://www.renpy.org/doc/html/quickstart.html#releasing-your-game)
 - [GUI Customization Guide](https://www.renpy.org/doc/html/gui.html#gui)
+- [Statement Equivalents](https://www.renpy.org/doc/html/statement_equivalents.html)
+- [Creator-Defined Statements](https://www.renpy.org/doc/html/cds.html)
+- [Creator-Defined Displayables](https://www.renpy.org/doc/html/cdd.html)
+- [Other Functions and Variables](https://www.renpy.org/doc/html/other.html)
+
+
+- https://www.reddit.com/r/RenPy/comments/195ylix/choice_menu_using_list_to_populate/
 - 
 ## Example Code: {#code}
 

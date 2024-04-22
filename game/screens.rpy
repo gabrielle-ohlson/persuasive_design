@@ -247,21 +247,25 @@ screen quick_menu():
     zorder 100
 
     if quick_menu:
+            add Image("gui/notify.png") xalign 0.51 yalign 1.0 size(800, 40) #add this and adjust the size and color as required
+            # add Color((255, 255, 255, 70)) xalign 0.5 yalign 1.0 size(700, 40) 
+        
+            hbox:
+                style_prefix "quick"
 
-        hbox:
-            style_prefix "quick"
+                xalign 0.5
+                yalign 0.99 # 1.0
+                # xalign 0.49 #0.5
+                # yalign 0.99 #1.0
 
-            xalign 0.5
-            yalign 1.0
-
-            textbutton _("Back") action Rollback()
-            textbutton _("History") action ShowMenu('history')
-            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
-            textbutton _("Auto") action Preference("auto-forward", "toggle")
-            textbutton _("Save") action ShowMenu('save')
-            textbutton _("Q.Save") action QuickSave()
-            textbutton _("Q.Load") action QuickLoad()
-            textbutton _("Prefs") action ShowMenu('preferences')
+                textbutton _("Back") action Rollback()
+                textbutton _("History") action ShowMenu('history')
+                textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
+                textbutton _("Auto") action Preference("auto-forward", "toggle")
+                textbutton _("Save") action ShowMenu('save')
+                textbutton _("Q.Save") action QuickSave()
+                textbutton _("Q.Load") action QuickLoad()
+                textbutton _("Prefs") action ShowMenu('preferences')
 
 
 ## This code ensures that the quick_menu screen is displayed in-game, whenever
@@ -1412,7 +1416,7 @@ style nvl_window:
     xfill True
     yfill True
 
-    background "bg wood" # None #"gui/nvl.png" #new
+    background None #"bg wood" # None #"gui/nvl.png" #new
     padding gui.nvl_borders.padding
 
 style nvl_entry:
@@ -1544,6 +1548,74 @@ define bubble.expand_area = {
 }
 
 
+#===============================================================================
+# ----------------------------------- CUSTOM -----------------------------------
+#===============================================================================
+# https://www.renpy.org/doc/html/style_properties.html#window-style-properties
+
+image bg black = "#000000"
+image bg white = "#ffffff"
+
+style bg_white is default
+
+style bg_white:
+    xfill True
+    yfill True
+    # background None #"gui/nvl.png" #new
+    
+    background "bg white"
+    padding gui.nvl_borders.padding
+
+image nvl_full = "gui/nvl.png"
+
+image nvl_textbox = "gui/nvl_textbox.png"
+
+
+image paper_desk composite = Composite(
+    (1920, 1080),
+    (0, 0), "bg wood",
+    (0, 0), "gui/nvl_paper.png"
+)
+
+# style bg_desk is default
+
+# #window:
+# style bg_desk:
+#     xfill True
+#     yfill True
+
+#     # background "paper_desk composite"
+
+#     # background "bg wood" 
+
+#     background "gui/nvl_paper.png"
+
+#     # foreground "gui/nvl_paper.png" # None #"bg wood" # None #"gui/nvl.png" #new
+#     padding gui.nvl_borders.padding
+
+#what:
+style nvl_paper:
+    xpos 410 #gui.nvl_thought_xpos
+    xanchor gui.nvl_thought_xalign # 0.0
+    ypos 0 # gui.nvl_thought_ypos
+    xsize 1105 #gui.nvl_thought_width
+    min_width gui.nvl_thought_width
+    textalign gui.nvl_thought_xalign
+    layout ("subtitle" if gui.nvl_text_xalign else "tex")
+
+style nvl_shadow:
+    xpos 410 #gui.nvl_thought_xpos
+    xanchor gui.nvl_thought_xalign # 0.0
+    ypos 0 # gui.nvl_thought_ypos
+    xsize 1105 #gui.nvl_thought_width
+    min_width gui.nvl_thought_width
+    textalign gui.nvl_thought_xalign
+    layout ("subtitle" if gui.nvl_text_xalign else "tex")
+    #
+    outlines [ (absolute(2), "#000", absolute(0), absolute(0)) ]
+
+    # background "gui/nvl_paper.png"
+
 
 ################################################################################
 ## Mobile Variants
@@ -1653,3 +1725,4 @@ style slider_vbox:
 style slider_slider:
     variant "small"
     xsize 900
+
