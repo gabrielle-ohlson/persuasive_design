@@ -130,10 +130,6 @@ screen choose(items):
 
 
 screen quiz(prompt, items):
-    default tt = Tooltip("No button selected.")
-
-    # $ renpy.say(nb, txt)
-    
     style_prefix "choice"
 
     tag bg
@@ -207,7 +203,7 @@ init python:
 
 # The game starts here with the built-in `start` label:
 label start:
-    $ narrate("Welcome to the game!  First, let's begin with a brief quiz.", bg="paper_desk composite")
+    $ narrate("Welcome to the game!  First, let's start with a brief quiz.", bg="paper_desk composite")
     $ clear()
 
     call screen quiz(
@@ -216,15 +212,15 @@ label start:
         QuizItem("Students have had ample time to plan around deadlines, but you empathize with the fact that sometimes things happen that are unexpected. While writing your grant draft, you answer student emails as they come to hear out what's causing them difficulty.", ("timely", 1))
     ]) with fade
 
-    $ renpy.notify("timely: " + str(timely)) #remove #debug
+    # $ renpy.notify("timely: " + str(timely)) #remove #debug
 
     call screen quiz(
-        "You notice that there's a student in your class who's struggling and not attending class consistently.\nYou want to reach out to the student to see if they're ok.", [
+        "You notice that there's a student in your class who's struggling and not attending class consistently.\nYou want to reach out to the student to see if they're ok. So you...", [
         QuizItem("You email the student and encourage them to come to office hours and remind them what time it is.", ("flexible", -1)),
         QuizItem("You email the student and ask them to suggest a time that works for them, saying that your plans are flexible (they may not be).", ("flexible", 1))
     ]) with fade
 
-    $ renpy.notify("flexible: "+ str(flexible)) #remove #debug
+    # $ renpy.notify("flexible: " + str(flexible)) #remove #debug
 
     call screen quiz(
         "Do you place an emphasis on learning or teaching experiences? For example, when a student is struggling, would you step in a bit later, to let the student \"figure it out\"?", [
@@ -232,8 +228,10 @@ label start:
         QuizItem("No, what the hell.", ("teach", 1))
     ]) with fade
 
-    $ renpy.notify("teach: " + str(teach)) #remove #debug
+    # $ renpy.notify("teach: " + str(teach)) #remove #debug
     
+    $ narrate("Thanks for answering! Let's begin.", bg="paper_desk composite")
+    $ clear()
 
     # =====
 
@@ -244,7 +242,7 @@ label start:
         QuizItem("Adjust your itinerary to accommodate the varying interests and needs of each member", ("timely", 1))
     ]) with fade
 
-    $ renpy.notify("timely: " + str(timely)) #remove #debug
+    # $ renpy.notify("timely: " + str(timely)) #remove #debug
 
     call screen quiz(
         "Imagine you're on a journey through a dense forest with a companion. As you trek along, your friend encounters a barrier blocking their path, and they're unable to overcome it on their own. How do you respond to this situation?", [
@@ -252,7 +250,7 @@ label start:
         QuizItem("Pause to assess the situation and consider seeking outside help", ("flexible", -1))
     ]) with fade
 
-    $ renpy.notify("flexible: "+ str(flexible)) #remove #debug
+    # $ renpy.notify("flexible: " + str(flexible)) #remove #debug
 
     call screen quiz(
         "Imagine a nest of young birds perched high in a tree. You witness the mother pushing each of her chicks out of the nest. One bird seems reluctant to leave the safety of the nest, while the others eagerly practice spreading their wings. How do you interpret this situation?", [
@@ -260,7 +258,7 @@ label start:
         QuizItem("You believe there are other ways for it to develop the skills and confidence needed for flight", ("teach", 1))
     ]) with fade
 
-    $ renpy.notify("teach: " + str(teach)) #remove #debug
+    # $ renpy.notify("teach: " + str(teach)) #remove #debug
     
 
     # =====
