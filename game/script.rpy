@@ -2,8 +2,11 @@
 # image source: https://charactercreator.org/#sex=f&skinColor=%23704139&irisColor=%23552200&hairColor=%231a1a1a&pupils=round&nose=strong&hair=down&emotion=neutral&shirt=structured_smart&shirtColor=%23e5e4e4&pants=jeans_bellbottoms&pantsColor=%23353743&shoes=moon
 define s = Character("Student")
 
+define t = Character(None, image="tara", kind=bubble)
+
+
 # image source: https://charactercreator.org/#sex=m&skinColor=%23e5b887&irisColor=%23784421&hairColor=%231a1a1a&pupils=round&hair=wavy&ears=default&nose=default&facialhair=beard_raw&glasses=hipster&tie=striped&jacket=suit_open&shirt=colar&pants=suit&shoes=leather
-define p = Character("Professor")
+define p = Character(None, image="student and professor meeting", kind=bubble)
 
 # define e = Character("Eileen", image="eileen")
 
@@ -203,7 +206,7 @@ init python:
 
 # The game starts here with the built-in `start` label:
 label start:
-    $ narrate("Welcome to the game!  First, let's start with a brief quiz.", bg="paper_desk composite")
+    $ narrate("Welcome to the game, \"Will Tara Pass the Class?\"!  First, let's start with a brief quiz.", bg="paper_desk composite")
     $ clear()
 
     call screen quiz(
@@ -258,6 +261,10 @@ label start:
     # $ renpy.notify("teach: " + str(teach)) #remove #debug
     
     $ narrate("Thanks for answering! Let's begin.", bg="paper_desk composite")
+
+    menu:
+        "Start Game":
+            pass
     $ clear()
 
     # =====
@@ -316,24 +323,25 @@ label start:
 
     # show screen choice_list(opts)
 
-    $ narrate("You are a new instructor at the Carnegie Institute of Technology (CIT) teaching a course about research methods. The class is a larger course, which makes staying connected with individual students slightly more difficult. Because it is a required course for students at CITis imperative that students pass you class so they can advance in their degree program.", bg="university")
+    $ narrate("You are a new instructor at the Carnegie Institute of Technology (CIT), teaching a course about research methods. The class is relatively large, which makes staying connected with individual students slightly more difficult. Because it is a required course for students at CIT, it is imperative that students pass your class so they can advance in their degree program.", bg="university")
 
-    $ narrate("\nYou're excited to embark on your teaching journey and are still learning about the different offices and resources that the university has to offer, including their Office of Disability Resources (or ODR).")
+    $ narrate("\nYou're excited to embark on your teaching journey and are still learning about the different offices and resources that the university has to offer, including their Office of Disability Resources (ODR).", alpha=True)
 
     
     $ clear()
-    $ narrate("This semester your research course includes students across academic years and background disciplines. This class involves a final group project that requires students to work together over several weeks. Each assignment builds off of each other and is critical towards progressing through all of the milestones.", bg="paper_desk composite")
-
-    $ narrate("\nThe semester is about two-thirds of the way into the course calendar. Students have already formed groups and gone through a couple rounds of collaborative brainstorming to narrow down their specific topic and problem space. They are currently gearing up to build initial iterations of their prototype for testing.")
+    $ narrate("This semester, your research course includes students from various academic years and disciplinary backgrounds. The class involves a final group project that requires students to work together over several weeks. Each assignment builds upon the previous ones and is critical for progressing through all the milestones.", bg="professor teaching")
 
     $ clear()
-    $ narrate("You have a student named Tara in your class – who has been promptly attending class and has a diligent work ethic. She has been keeping up with all of her assignments and been notably contributing towards her team's progress for the project so far.", bg="student classroom")
+    $ narrate("The semester is about two-thirds of the way through the course calendar. Students have already formed groups and gone through a couple of rounds of collaborative brainstorming to narrow down their specific topic and problem space. They are currently gearing up to build initial iterations of their prototype for testing.", bg="students working")
+
+    $ clear()
+    $ narrate("You have a student named Tara in your class who has been promptly attending class and has a diligent work ethic. She has been keeping up with all of her assignments and has notably contributed to her team's progress on the project so far.", bg="student classroom")
     
     $ clear()
-    $ narrate("You're sitting in your office in Scaife hall when you hear your laptop ping. An email notification breaks the silence of your concentration. It's a follow-up from a student explaining their situation in detail and asking for help.", bg="professor office")
+    $ narrate("You’re sitting in your office in Scaife hall when you hear your laptop ping. An email notification breaks the silence of your concentration. It's a message from Tara explaining a situation and asking for help.", bg="professor office")
 
     $ clear()
-    $ narrate("The email reads:", bg="laptop composite")
+    $ narrate("The email reads:", bg="laptop composite") #TODO: edit this to have new email text
 
     $ clear()
     $ narrate("Tara's situation seems somewhat complex. You glance at the corner of your desk, where the grant proposal sits. There's a choice to be made...", bg="professor grant")
@@ -343,12 +351,21 @@ label start:
 
     # The call screen statement shows a screen, and then hides it again at the end of the current interaction. If the screen returns a value, then the value is placed in the global _return variable.
     call screen choose([
-        ChoiceItem("You can't afford any distractions. The grant is too important, and Tara needs to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "opt1"),
-        ChoiceItem("You decide to schedule a zoom meeting with the Tara to coordinate with them.", "opt2"), # here, backslashes are used to escape double quotes in the statement
-        ChoiceItem("You respond to Tara's email.", "opt3")
+        ChoiceItem("You can't afford any distractions. The grant is too important, and Tara needs to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "storm"), #done
+        ChoiceItem("You decide to schedule a Zoom meeting with Tara to coordinate with them.", "Zoom"), # here, backslashes are used to escape double quotes in the statement #done ish #?
+        ChoiceItem("You respond to Tara's email directing her to reach out to the Office of Disability Resources (ODR) for further accommodation requests.", "ODR")
     ]) with fade
 
-    label opt1:
+    label storm:
+        $ clear()
+        $ narrate("When a student's outreach is not acknowledged, it could be perceived as a lack of support. Even if unable to grant the request, recognition of the student's effort to communicate can maintain a positive rapport and demonstrate that their concerns have been heard.", bg="tara")
+
+        t "I feel like my efforts to communicate my situation was overlooked."
+        
+        t "An acknowledgement would have helped me have some sort of trust in the support system here at ICT..."
+
+        t "I feel like my voice in this institution doesn't even matter."
+
         $ clear()
         $ narrate("The storm after the calm. Your office becomes a reflection of the turmoil brewing outside it.", bg="professor office storm")
 
@@ -359,23 +376,162 @@ label start:
         $ clear()
         $ narrate("You stare at the screen, the ODR email open in front of you. Training modules on accommodating students feel like a chore, something you have convinced yourself you are beyond needing.", bg="professor office stare")
 
-        $ narrate("\nSigh... this training seems like such a drag. I know all this stuff already, don't I? Maybe I'll put the grant proposal on hold for today and reach out to the student to discuss what would be helpful for them. It's not too late, right?", alpha=True)
-
-        call screen choose([
-            ChoiceItem("Initiate a conversation with Tara as a way to right your wrongs.", "opt2") #TODO: determine if correct
-        ]) with fade
-
-    label opt2:
         $ clear()
-        $ narrate("You and Tara join the Zoom meeting room and begin to discuss Tara's options. Based on the meeting you:", bg="professor zoom")
 
+        $ narrate("\nSigh... this training seems like such a drag. I know all this stuff already, don't I? Maybe I'll put the grant proposal on hold for today and reach out to the student to discuss what would be helpful for them. It's not too late, right?", bg="odr email")
+
+        $ clear()
         call screen choose([
-            ChoiceItem("Suggest to Tara to either drop the class or obtain official ODR documentation due to concerns about unequal treatment.", "opt2_1"),
-            ChoiceItem("Join Tara in their optimism and collaboratively work on a tight timeline to regain momentum.", "opt2_2"),
-            ChoiceItem("Encourage Tara to prioritize rest, suggest adjusting the timeline, and propose a solo project as an alternative.", "opt2_3")
+            ChoiceItem("Initiate a conversation with Tara as a way to right your wrongs.", "honest") #TODO: determine if correct
         ]) with fade
 
-    label opt2_1:
+    label Zoom:
+        $ clear()
+        $ narrate("You and Tara join the Zoom meeting room and begin to discuss Tara's options. She is optimistic that she can recover quickly in the next week. Based on the meeting you:", bg="professor zoom")
+
+        call screen choose([
+            ChoiceItem("Suggest to Tara to either drop the class or obtain official ODR documentation due to concerns about unequal treatment.", "drop"), #TODO: confirm this path
+            ChoiceItem("Join Tara in their optimism and collaboratively work on a tight timeline to regain momentum.", "optimistic"), #done
+            ChoiceItem("Encourage Tara to prioritize rest, suggest adjusting the timeline, and propose a solo project as an alternative.", "rest") #done
+        ]) with fade
+
+    label drop:
+        $ clear()
+        $ narrate("Suggesting a student drop a class or seek formal documentation can be a pragmatic response to a complex situation. However, it's important to balance procedural advice with empathy to ensure students feel personally supported.", "ODR") #? #TODO: figure out this path
+
+    label giveup:
+        $ clear()
+        $ narrate("Tara sees your email and decides to give up completely. Tara stops submitting classwork and eventually is able to get special permissions to withdraw from your course.", bg="student sad bed")
+
+        $ narrate("\nTara does not pass the class.", alpha=True)
+
+        jump game_end
+    
+    # label optimistic:
+    #     $ clear()
+    #     $ narrate("You are optimistic about Tara's progress in the class but after a couple of weeks you notice Tara's progress updates have stopped. You're walking across The Cut to head to your office when you check your phone and see the following email from Tara:", bg="TODO")
+
+    #     #TODO: add img 
+    #     nvl clear
+    #     nt "This email catches you off guard. You're disappointed and frustrated that your efforts to help Tara are falling short. But you also want to prioritize Tara's health and well being. How will you respond?"
+
+    #     #TODO: add menu 
+    #     menu:
+    #         "Hey Tara,\nI wonder if we will be able to hit the required learning goals for this course. I think the best move forward is that I'll give you the credit that I can for what work you've done throughout the course.\nRight now that means you'll end up with a C+":
+    #             jump giveup #done
+
+    #         "Hey Tara,\nI see. It's difficult to see how you'll be able to hit the required learning goals for the course, so I may not be able to give you the grade you're looking for.\nAre you available during the summer? We could have you continue completing work then if you're willing to take an Incomplete for the course.":
+    #             jump summer #done
+        
+
+    label optimistic:
+        $ clear()
+        $ narrate("At first it seems like Tara is catching up, but you later receive emails from their team members complaining that they haven't been doing their part in the project and have fallen off the grid. What should you do?", bg="team project")
+
+        $ clear()
+        $ narrate("This email catches you off guard. You're disappointed and frustrated that your efforts to help Tara are falling short. But you also want to prioritize Tara's health and well being. How will you respond?", bg="professor nervous")
+
+        # #TODO: add menu 
+        # menu:
+        #     "Hey Tara,\nI wonder if we will be able to hit the required learning goals for this course. I think the best move forward is that I'll give you the credit that I can for what work you've done throughout the course.\nRight now that means you'll end up with a C+":
+        #         jump giveup #done
+
+        #     "Hey Tara,\nI see. It's difficult to see how you'll be able to hit the required learning goals for the course, so I may not be able to give you the grade you're looking for.\nAre you available during the summer? We could have you continue completing work then if you're willing to take an Incomplete for the course.":
+        #         jump summer #done
+
+        call screen choose([
+            # ChoiceItem("You reflect on why the Tara hadn't reached out to you to express that they were still struggling and ask for more support. You did everything you could to make them feel like they could still succeed, right? {b}You decide to email them to ask what went wrong.{\b}", "honest"),
+            ChoiceItem("You reflect on why Tara hadn't reached out to you to ask for more support. You did everything you could to make them feel like they could still succeed, right? You decide to email them to ask what went wrong.", "honest"),
+            ChoiceItem("You tell the group to \"work it out between themselves.\" Collaboration is an important skill to have in academia, so they could use the practice. Besides, you've already done your part to support Tara.", "giveup"), #?
+            # ChoiceItem("{b}You tell the group to \"work it out between themselves\" -- it seems like the Tara is failing to communicate.{\b} You think about how collaboration is an important skill to have in academia, so they student could use the practice with resolving interpersonal conflict on their own. Besides, you've already done your part to support Tara.", "giveup"), #?
+            ChoiceItem("You send an email to Tara that reads, \"Hey Tara, It's difficult to see how you'll be able to hit the required learning goals for the course, so I may not be able to give you the grade you're looking for. Are you available during the summer? We could have you continue completing work then if you're willing to take an Incomplete for the course.\"", "summer") #done
+        ]) with fade
+
+    label honest: #opt2_2_1
+        $ clear()
+        $ narrate("Tara responds with an appreciative and honest email. Tara was states that they were optimistic that they could overcome these obstacles, but they've never had to get academic accommodations before, and it wasn't as easy as they thought it would be.", bg="student ponder computer")
+
+        $ narrate("\nAll Tara had heard from other students with accommodations were horror stories about professors expecting them to function highly and blaming them for their difficulties.  Tara apologizes for assuming you would do the same, and ask where you think they should go from here.", alpha=True)
+
+        $ narrate("\nBased on this email you contemplate then decide:")
+
+        $ clear()
+        call screen choose([
+            ChoiceItem("You feel a bit surprised by this email, and even a little offended. You wish students would give others a chance to help them, rather than ignoring emails and playing the victim last minute. This has clearly gotten out of hand and you feel awkward intervening at this point. You send Tara to ODR and suggest they either take an incomplete or drop the class so they can focus on self-improvement.", "questioning"), #done
+            ChoiceItem("This email makes you think hard about your role as a professor and the dynamic at your university. You didn't know how unaccommodating professors have been, and you suspect you may unknowingly made mistakes too. If you are a good person and just didn't know what to do, maybe there are other professors in the same position? You decide to organize a discussion and accessibility training for professors to share what you've learned.", "congrats") #done
+        ]) with fade
+
+    label questioning:
+        $ clear()
+        $ narrate("Questioning the timing of a student's request for accommodations can inadvertently signal distrust. It's vital to create an inclusive environment where students feel comfortable disucssing their needs at any point.", "tara")
+
+        t "I feel somewhat uncomfortable with my integrity being questioned."
+        
+        t "I was already struggling with my decision to reach out and was looking for reassurance that my academic journey was still on track."
+
+        $ clear()
+        $ narrate("You never heard back from the student, but receive a notification email from the system informing you that the student has dropped your class. This sits uneasy with you, but you talk to some other professors who have dealt with similar issues and who say, \"that's just how it goes sometimes, you tried your best\" -- which makes you feel better.", "professor others")
+
+        $ clear()
+        $ narrate("Next semester, while working on a research project in Wean Hall, you overhear two students talking about how the student who dropped your class has gone on to drop out of the program. One of the students starts to say, \"I don't blame them, that professor [[you] is known for being unaccommodating and difficult to talk to---\"", "whisper")
+
+        $ clear()
+        $ narrate("They see you enter the area and go silent, grab their things, and leave.", "professor door")
+
+        jump game_end
+    
+    label congrats:
+        $ clear()
+        $ narrate("Tara passes the class!", bg="student pass") # student happy
+
+        $ clear()
+        $ narrate("Congratulations!", bg="professor celebrate 1")
+        
+        $ clear()
+        $ narrate("You grew as a person and a mentor, and you played an important role in affecting positive change for disabled students at CIT.", bg="professor celebrate 2")
+        
+        $ clear()
+        $ narrate("Over the years, you will become known as a fantastic and understanding professor to take a class with among students.", bg="professor celebrate 3")
+
+        $ clear()
+        $ narrate("Your efforts will contribute to an increase in neurodiversity in higher education, accessible classrooms that those who usually skip class from overwhelm instead thrive in, and the normalization of difficult dialogue surrounding accommodations between students and professors.", bg="accessible classroom")
+
+        $ win = True
+        jump game_end
+            
+
+    label rest:
+        $ clear()
+        $ narrate("Tara responds positively to you proposing that they prioritize rest. You begin to work with them on the mechanics of the solo project.", bg="student dorm tv")
+
+        $ clear()
+        $ narrate("The following week you both meet in your office in Scaife hall and map out a game plan. You state:", bg="student and professor meeting")
+
+        p "Ok... So here's what's going to happen. You've already helped with designing milestone 1."
+        
+        p "I'll look at what you contributed for that assignment later tonight"
+        
+        p "I want you to go ahead and storyboard how you would improve the prototype based on my feedback, okay?"
+        p "Let's make our objective that you at least go through thinking about all of the prototyping steps..."
+
+        $ clear()
+        $ narrate("You pause momentarily and observe the overwhelmed expression on Tara's face...", "student overwhelmed 2")
+
+        jump optimistic
+
+    label opt2_3_1: #TODO: figure out
+        $ clear()
+        $ narrate("Tara withdraws from the class in frustration")
+
+    label summer:
+        $ clear()
+        $ narrate("You offer the student the option to either take summer version of the course or take an Incomplete and complete the course requirements over the summer.", bg="student summer")
+
+        call screen choose([
+            ChoiceItem("The student takes the summer version of the course and ends the term with a higher grade. Given the additional time and slower pace of the summer, the student feels much more relaxed which positively impacts how much information they retain.":, "game_end")
+        ]) with fade
+    
+    label ODR:
         $ clear()
         $ narrate("Tara has never worked with ODR and get nervous, and begin to fall behind in your class.", bg="student sad dorm computer")
 
@@ -386,111 +542,8 @@ label start:
         $ narrate("As your work begins to pile up, you sit at the La Prima in Gates drinking tea and contemplate your next move:", bg="professor tea contemplating") 
 
         call screen choose([
-            ChoiceItem("The student sends another email explaining their situation & requesting some kind of help.":, "TODO")
+            ChoiceItem("The student sends another email explaining their situation & requesting some kind of help.":, "TODO") #?
         ]) with fade
-
-    label giveup: #TODO: determine which path this connects to
-        #TODO: add img 
-        n "Tara sees your email and decides to give up completely. Tara stops submitting classwork and eventually is able to get special permissions to withdraw from your course."
-
-        n "\nTara does not pass the class."
-
-        jump game_end
-    
-    label opt2_2:
-        $ clear()
-        $ narrate("At first it seems like Tara is catching up, but you later receive emails from their team members complaining that they haven't been doing their part in the project and have fallen off the grid. What should you do?", bg="team project")
-
-        call screen choose([
-            ChoiceItem("You reflect on why the Tara hadn't reached out to you to express that they were still struggling and ask for more support. You did everything you could to make them feel like they could still succeed, right? {b}You decide to email them to ask what went wrong.{\b}":, "opt2_2_1"),
-            ChoiceItem("{b}You tell the group to \"work it out between themselves\" -- it seems like the Tara is failing to communicate.{\b} You think about how collaboration is an important skill to have in academia, so they student could use the practice with resolving interpersonal conflict on their own. Besides, you've already done your part to support Tara.", opt2_2_1_1)
-        ]) with fade
-
-    label opt2_2_1:
-        #TODO: add img 
-        nvl clear
-        n "Tara responds with an appreciative and honest email. Tara was states that they were optimistic that they could overcome these obstacles, but they've never had to get academic accommodations before, and it wasn't as easy as they thought it would be."
-
-        n "\nAll Tara had heard from other students with accommodations were horror stories about professors expecting them to function highly and blaming them for their difficulties.  Tara apologizes for assuming you would do the same, and ask where you think they should go from here."
-        
-        #TODO: add menu 
-        nvl clear
-
-        n "\nBased on this email you contemplate then decide:"
-
-        menu:
-            "You feel a bit surprised by this email, and even a little offended. You have put it more effort than your job expects you to in order to support this student. You wish students would give professors and group members a chance to help them, rather than ignoring emails and playing the victim last minute. This has clearly gotten out of hand and you feel awkward intervening at this point. You send the Tara to ODR and suggest they either take an incomplete or drop the class so they can focus on self-improvement.":
-                jump opt2_2_1_1
-
-            "This email makes you think hard about your role as a professor and the dynamic at your university. You didn't know how unaccommodating professors at your school have been and you even feel a little embarrassed, because you suspect you may unknowingly have made other students feel this way too. If you are a good person and just didn't know what to do, maybe there are other professors in the same position? You decide to organize a discussion and accessibility training for professors to share what you've learned.":
-                jump opt2_2_1_2
-
-    label opt2_2_1_1:
-        #TODO: add img 
-        nvl clear
-        n "You never heard back from the student, but receive a notification email from the system informing you that the student has dropped your class. This sits uneasy with you, but you talk to some other professors who have dealt with similar issues and who say, \"that's just how it goes sometimes, you tried your best\" -- which makes you feel better."
-
-        #TODO: add img 
-        nvl clear
-        n "Next semester, while working on a research project in Wean Hall, you overhear two students talking about how the student who dropped your class has gone on to drop out of the program. One of the students starts to say, \"I don't blame them, that professor [[you] is known for being unaccommodating and difficult to talk to---\";"
-
-        n "They see you enter the area and go silent, grab their things, and leave."
-
-        jump game_end
-    
-    label opt2_2_1_2:
-        #TODO: add img 
-        nvl clear
-        n "Tara passes the class!"
-
-        n "Congratulations! You grew as a person and a mentor, and you played an important role in affecting positive change for disabled students at CIT. Over the years, you will become known as a fantastic and understanding professor to take a class with among students."
-        
-        n "Your efforts will contribute to an increase in neurodiversity in higher education, accessible classrooms that those who usually skip class from overwhelm instead thrive in, and the normalization of difficult dialogue surrounding accommodations between students and professors."
-
-        $ win = True
-        jump game_end
-            
-
-    label opt2_3:
-        #TODO: add img 
-        nt "Tara responds positively to you proposing that they prioritize rest. You begin to work with them on the mechanics of the solo project. The following week you both meet in your office in Scaife hall and map out a game plan. You state:"
-
-        p "Ok... So here's what's going to happen. You've already helped with designing milestone 1. I'll look at what you contributed for that assignment later tonight. I want you to go ahead and storyboard how you would improve the prototype based on my feedback, okay? Let's make our objective that you at least go through thinking about all of the prototyping steps"
-
-        #TODO: add img 
-        nvl clear
-
-        # nt "You pause momentarily and observe the overwhelmed expression on Tara's face." #?
-        # jump TODO
-
-        n "You are optimistic about Tara's progress in the class but after a couple of weeks you notice Tara's progress updates have stopped. You're walking across The Cut to head to your office when you check your phone and see the following email from Tara:"
-
-        #TODO
-
-        #TODO: add img 
-        nvl clear
-        nt "This email catches you off guard. You're disappointed and frustrated that your efforts to help Tara are falling short. But you also want to prioritize Tara's health and well being. How will you respond?"
-
-        #TODO: add menu 
-        menu:
-            "Hey Tara,\nI wonder if we will be able to hit the required learning goals for this course. I think the best move forward is that I'll give you the credit that I can for what work you've done throughout the course.\nRight now that means you'll end up with a C+":
-                jump opt2_3_1
-
-            "Hey Tara,\nI see. It's difficult to see how you'll be able to hit the required learning goals for the course, so I may not be able to give you the grade you're looking for.\nAre you available during the summer? We could have you continue completing work then if you're willing to take an Incomplete for the course.":
-                jump opt2_3_2
-
-    label opt2_3_1:
-        n "Tara withdraws from the class in frustration"
-
-    label opt2_3_2:
-        n "You offer the student the option to either 1: take summer version of the course or take and incomplete and complete the course requirements over the summer."
-        
-        menu:
-            "The student takes the summer version of the course and ends the term with a higher grade. Given the additional time and slower pace of the summer, the student feels much more relaxed which positively impacts how much information they retain.":
-                jump game_end
-
-    label opt3:
-        jump TODO
 
     label TODO:
         nvl clear
@@ -501,7 +554,9 @@ label start:
         hide student
         hide professor
 
-        with fade
+        $ clear()
+
+        show bg white #?
 
         # Here we use a python `if` statement to check the flag and determine what text is displayed:
         if win: 
