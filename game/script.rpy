@@ -204,10 +204,12 @@ init python:
 
 
 
+default 
+
 # The game starts here with the built-in `start` label:
 label start:
-    $ narrate("Welcome to the game, \"Will Tara Pass the Class?\"!  First, let's start with a brief quiz.", bg="paper_desk composite")
-    $ clear()
+    # $ narrate("Welcome to the game, \"Will Tara Pass the Class?\"!  First, let's start with a brief quiz.", bg="paper_desk composite")
+    # $ clear()
 
     call screen quiz(
         "You're teaching a course which has a few major projects. You observe that on the eve of a big research grant deadline that your student requests for extensions are piling up in your inbox. How do you manage the situation?", [
@@ -399,7 +401,7 @@ label start:
 
     label drop:
         $ clear()
-        $ narrate("Suggesting a student drop a class or seek formal documentation can be a pragmatic response to a complex situation. However, it's important to balance procedural advice with empathy to ensure students feel personally supported.", "ODR") #? #TODO: figure out this path
+        $ narrate("Suggesting a student drop a class or seek formal documentation can be a pragmatic response to a complex situation. However, it's important to balance procedural advice with empathy to ensure students feel personally supported.", "TODO") #? #TODO: figure out this path #TODO: add image
 
     label giveup:
         $ clear()
@@ -431,7 +433,7 @@ label start:
         $ narrate("At first it seems like Tara is catching up, but you later receive emails from their team members complaining that they haven't been doing their part in the project and have fallen off the grid. What should you do?", bg="team project")
 
         $ clear()
-        $ narrate("This email catches you off guard. You're disappointed and frustrated that your efforts to help Tara are falling short. But you also want to prioritize Tara's health and well being. How will you respond?", bg="professor nervous")
+        $ narrate("This email catches you off guard. You're disappointed and frustrated that your efforts to help Tara are falling short. But you also want to prioritize Tara's health and well being. How will you respond?", bg="professor nervous") #TODO: figure out where this leads #?
 
         # #TODO: add menu 
         # menu:
@@ -530,7 +532,7 @@ label start:
         $ narrate("You offer the student the option to either take summer version of the course or take an Incomplete and complete the course requirements over the summer.", bg="student summer")
 
         call screen choose([
-            ChoiceItem("The student takes the summer version of the course and ends the term with a higher grade. Given the additional time and slower pace of the summer, the student feels much more relaxed which positively impacts how much information they retain.":, "game_end")
+            ChoiceItem("The student takes the summer version of the course and ends the term with a higher grade. Given the additional time and slower pace of the summer, the student feels much more relaxed which positively impacts how much information they retain.", "game_end")
         ]) with fade
     
     label ODR:
