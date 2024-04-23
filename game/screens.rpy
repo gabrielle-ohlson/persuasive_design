@@ -1314,6 +1314,7 @@ screen nvl(dialogue, items=None):
         style "nvl_window"
 
         has vbox:
+            # ysize gui.nvl_height
             spacing gui.nvl_spacing
 
         ## Displays dialogue in either a vpgrid or the vbox.
@@ -1323,6 +1324,7 @@ screen nvl(dialogue, items=None):
                 cols 1
                 yinitial 1.0
 
+                use nvl_dialogue(dialogue)
                 use nvl_dialogue(dialogue)
 
         else:
@@ -1338,6 +1340,24 @@ screen nvl(dialogue, items=None):
                 style "nvl_button"
 
     add SideImage() xalign 0.0 yalign 1.0
+
+
+
+screen nvl_dialogue_test(dialogue):
+    style_prefix "choice"
+
+    # background  "gui/nvl_textbox.png" 
+
+    vbox:
+        for d in dialogue:
+            if d.who is not None:
+
+                text d.who:
+                    id d.who_id
+
+            text d.what:
+                id d.what_id
+            # textbutton i.caption action i.action
 
 
 screen nvl_dialogue(dialogue):
@@ -1368,6 +1388,7 @@ screen nvl_narration(dialogue, items=None):
 
         has vbox:
             spacing gui.nvl_spacing
+            
 
         ## Displays dialogue in either a vpgrid or the vbox.
         if gui.nvl_height:
@@ -1410,18 +1431,22 @@ style nvl_narration:
     yfill True
 
     background None
+    # background "gui/nvl_textbox.png" 
     padding gui.nvl_borders.padding
 
 style nvl_window:
     xfill True
     yfill True
 
+    # background "gui/nvl_textbox.png" #test
     background None #"bg wood" # None #"gui/nvl.png" #new
     padding gui.nvl_borders.padding
 
 style nvl_entry:
     xfill True
     ysize gui.nvl_height
+
+    background None #"gui/nvl_textbox.png" #new #* here to add fade to background
 
 style nvl_label:
     xpos gui.nvl_name_xpos

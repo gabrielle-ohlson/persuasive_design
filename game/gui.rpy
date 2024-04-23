@@ -87,8 +87,8 @@ define gui.title_text_size = 75
 ## Main and Game Menus #########################################################
 
 ## The images used for the main and game menus.
-define gui.main_menu_background = "gui/main_menu.png"
-define gui.game_menu_background = "gui/game_menu.png"
+define gui.main_menu_background = "tara outside university"
+define gui.game_menu_background = "gui/game_menu.png" #TODO: edit
 
 
 ## Dialogue ####################################################################
@@ -207,7 +207,8 @@ define gui.quick_button_text_selected_color = gui.accent_color
 define gui.choice_button_width = 1185
 define gui.choice_button_height = None
 define gui.choice_button_tile = False
-define gui.choice_button_borders = Borders(150, 8, 150, 8)
+define gui.choice_button_borders = Borders(150, 15, 150, 15) #* use this to adjust borders around quiz questions
+# define gui.choice_button_borders = Borders(150, 8, 150, 8)
 define gui.choice_button_text_font = gui.text_font
 define gui.choice_button_text_size = gui.text_size
 define gui.choice_button_text_xalign = 0.5
@@ -284,7 +285,9 @@ define gui.main_menu_text_xalign = 1.0
 ## components when an overlay or window is not present.
 
 ## Generic frames.
-define gui.frame_borders = Borders(6, 6, 6, 6)
+# define gui.frame_borders = Borders(6, 6, 6, 6)
+define gui.frame_borders = Borders(60, 24, 60, 24) #* #use thiss to adjust quiz borders
+# left top right bottom
 
 ## The frame that is used as part of the confirm screen.
 define gui.confirm_frame_borders = Borders(60, 60, 60, 60)
@@ -480,3 +483,17 @@ init python:
 
         gui.nvl_button_width = 1860
         gui.nvl_button_xpos = 30
+
+
+
+
+
+
+
+
+
+
+
+## The width and height of a button, in pixels. If None, Ren'Py computes a size.
+# define gui.choice_button_width = 1185
+define gui.nvl_entry_height = None

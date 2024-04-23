@@ -1,4 +1,19 @@
-﻿# Define the character variables:
+﻿default preferences.skip_after_choices = True
+
+# screen whatever:
+#     on "show" action With(my_imagedissolve)
+#     on "replace" action With(my_imagedissolve)
+
+
+
+# frame:
+#                 style_group "pref"
+#                 has vbox
+
+#                 textbutton _("Auto Read") action Preference("auto-forward", "toggle")
+#     # config.skipping
+
+# Define the character variables:
 # image source: https://charactercreator.org/#sex=f&skinColor=%23704139&irisColor=%23552200&hairColor=%231a1a1a&pupils=round&nose=strong&hair=down&emotion=neutral&shirt=structured_smart&shirtColor=%23e5e4e4&pants=jeans_bellbottoms&pantsColor=%23353743&shoes=moon
 define s = Character("Student")
 
@@ -34,6 +49,81 @@ define nb = Character(None, kind=nvl, what_style="nvl_paper", what_color="#00000
 # Returns the name of the first statement in s.
 
 # filename is the name of the filename that statements in the string will appear to be from.
+
+
+
+# style bubble_speech_text:
+#     xsize None # needed - otherwise it uses a gui setting
+#     align (0,0) # also likely needed
+
+#     # You could include your standard font specific stuff
+#     color "#F00"
+#     # font ""
+#     kerning -1.0
+#     size 26
+#     bold True
+#     # etc etc
+
+screen narrator_full_overlay(txt, **kwargs):
+    frame:
+        background "nvl_full"
+
+
+screen narrator_overlay(txt, **kwargs):
+    style_prefix "narrator" # This is actually passed through keywords
+    
+    fixed:
+        yanchor 0.0
+        xsize 1080
+        pos (0.0, 0.0) # Our x, y position, also through keywords
+        # pos (450, 320) # Our x, y position, also through keywords
+
+        frame:
+            text txt # "The Text" # Actually transcluded from the parent screen
+
+
+style narrator_frame:
+    # our background picture
+    background Frame(
+        "gui/nvl_textbox.png"
+        # left = Borders(0, 32, 0, 0)
+        # left = Borders(32, 33, 88, 80)
+        )
+
+    # These are the distance between the text area and frame outer edge
+    # left_padding 24
+    # top_padding 12 #22
+    # right_padding 23
+    # bottom_padding 73
+    # We *could* do all that in one line with
+    # padding (24, 22, 23, 73) # (left, top, right, base)
+
+    minimum (121, 114) #?
+
+    xsize 1920 # full width
+
+    # Now the anchor (the pixel of this widget to place at the stated pos)
+    # This should generally reflect where the end of the tail lies
+    anchor (0.0, 0.0) # (1.0, 1.0)
+    # # You could add a slight offset if wanted (so show_pos is on the tail)
+    # offset (12, 7)
+
+
+
+style narrator_text:
+    xpos 410 #gui.nvl_thought_xpos
+    xanchor gui.nvl_thought_xalign # 0.0
+    ypos 0 # gui.nvl_thought_ypos
+    xsize 1105 #1105 #gui.nvl_thought_width
+    min_width gui.nvl_thought_width
+    textalign gui.nvl_thought_xalign
+    layout ("subtitle" if gui.nvl_text_xalign else "tex")
+    #
+    # outlines [ (absolute(2), "#000", absolute(0), absolute(0)) ]
+    color "#ffffff00"
+    # outlines [ (absolute(2), "#000", absolute(0), absolute(0)) ]
+
+
 
 image laptop composite = Composite(
     (1920, 1080),
@@ -97,7 +187,7 @@ init python:
         def __init__(self, caption, next_label=None):
             self.caption = caption
             if next_label: self.action = Jump(next_label)
-            else: self.action = None
+            else: self.action = Return(None) #equivalent of `pass`
 
     class QuizItem:
         def __init__(self, caption, quality=None):
@@ -108,33 +198,8 @@ init python:
 
 
 
-
-
-screen choose(items):
-    style_prefix "choice"
-
-    tag bg
-
-    window: #?
-    # frame:
-        xfill True
-        yfill True
-        background "bg desk"
-
-        vbox:
-            for i in items:
-                if i.action:
-                    textbutton i.caption action i.action
-                else:
-                    text i.caption
-
-        on "show" action Show("navigation")
-        on "hide" action Hide("navigation")
-
-
-screen quiz(prompt, items):
-    style_prefix "choice"
-
+screen black:
+    # style_prefix "choice"
     tag bg
 
     window: #?
@@ -142,6 +207,74 @@ screen quiz(prompt, items):
         xfill True
         yfill True
         background "bg black"
+
+
+
+init python:
+    class ChoiceLayout:
+        def __init__(self, xalign=0.5, ypos=405, yanchor=0.5, spacing=33):
+            self.xalign = xalign
+            self.ypos = ypos
+            self.yanchor = yanchor
+            self.spacing = spacing #gui.choice_spacing
+
+
+screen choose(items, bg="bg desk", layout=ChoiceLayout()): #, y_align=0.5): #TODO: #check
+    style_prefix "choice"
+
+    tag bg
+
+    window: #?
+    # frame:
+        xfill True
+        yfill True
+        background bg
+
+        vbox:
+            xalign layout.xalign
+            ypos layout.ypos
+            yanchor layout.yanchor
+            spacing layout.spacing
+            # yanchor .3
+            # yalign 1.0 #y_align
+            for i in items:
+                if i.action:
+                    textbutton i.caption action i.action
+                else:
+                    # textbutton i.caption action NullAction #TODO: #check
+                    text i.caption
+
+        on "show" action Show("navigation")
+        on "hide" action Hide("navigation")
+
+
+screen quiz(prompt, items, bg="bg black", layout=ChoiceLayout()): #TODO: layout stuff
+    style_prefix "choice"
+
+    tag bg
+
+    
+    # gui.choice_button_width = 1860
+    # gui.choice_button_text_size = 45
+
+
+    # define gui.choice_button_width = 1185
+    # define gui.choice_button_height = None
+    # define gui.choice_button_tile = False
+    # define gui.choice_button_borders = Borders(150, 8, 150, 8)
+    # define gui.choice_button_text_font = gui.text_font
+    # define gui.choice_button_text_size = gui.text_size
+    # define gui.choice_button_text_xalign = 0.5
+    # define gui.choice_button_text_idle_color = '#888888'
+    # define gui.choice_button_text_hover_color = "#000000"
+    # define gui.choice_button_text_insensitive_color = '#8888887f'
+    
+
+    # window: #?
+    frame:
+        xfill True
+        yfill True
+        background bg
 
         text prompt yalign 0.0 color "#fff"
 
@@ -157,20 +290,71 @@ screen quiz(prompt, items):
         on "hide" action Hide("navigation")
 
 
+# screen narrator(what, bg="bg baclk"):
+#     style_prefix "narrator"
+#     # define gui.button_width = None
+#     # define gui.button_height = None
+#     # style_prefix "say"
+
+#     frame:
+#         xfill True
+#         yfill True
+#         background bg
+
+#         vbox:
+#             for i in items:
+#                 textbutton i.caption action i.action
+#             textbutton
+
+
+#     ## If there's a side image, display it above the text. Do not display on the
+#     ## phone variant - there's no room.
+#     if not renpy.variant("small"):
+#         add SideImage() xalign 0.0 yalign 1.0
+
+
 init python:
     # https://www.renpy.org/doc/html/python.html#default-statement
     bg_img = None
 
+    def quizMenu(prompt, items, bg="bg black", layout=ChoiceLayout()):
+        if bg is not None and (bg_img is None or bg_img != bg):
+            renpy.hide("bg")
+            renpy.show("bg black", tag="bg")
+            renpy.with_statement(trans=dissolve)
+
+        # renpy.with_statement(trans=dissolve)
+        renpy.call_screen("quiz", _with_none=False, prompt=prompt, items=[QuizItem(*vals) for vals in items], bg=bg, layout=layout)
+        renpy.with_statement(trans=fade)
+
+
+    def choiceMenu(items, bg="bg desk", layout=ChoiceLayout()): #choices is list of tuples 
+        if bg is not None and (bg_img is None or bg_img != bg):
+            # renpy.with_statement(trans=dissolve)
+            renpy.hide("bg")
+            renpy.show("bg black", tag="bg")
+            renpy.with_statement(trans=dissolve)
+
+        # renpy.with_statement(trans=dissolve)
+        renpy.call_screen("choose", _with_none=False, items=[ChoiceItem(*vals) for vals in items], bg=bg, layout=layout)
+        renpy.with_statement(trans=fade)
+
     # def narrate(txt, bg="paper_desk composite", white=False):
-    def narrate(txt, bg=None, alpha=False):
+    def narrate(txt, bg=None, full_overlay=False):
         
         global bg_img
         if bg is not None and (bg_img is None or bg_img != bg):
-            
+            if bg_img is not None:
+                # renpy.with_statement(trans=dissolve)
+                renpy.hide("bg")
+                renpy.show("bg black", tag="bg") #new #check
+                renpy.with_statement(trans=dissolve)
+                
             # Fade(0.5)
             # renpy.pause(0.5)
-            renpy.with_statement(trans=dissolve) # fade)
+            # renpy.with_statement(trans=fade) # fade)
             renpy.show(bg, tag="bg")
+            renpy.with_statement(trans=fade) # fade)
             # renpy.show_screen("narration_background", img=bg) #, _tag="bg")
             # _window_show(trans=fade)
 
@@ -179,21 +363,45 @@ init python:
 
             # renpy.notify(bg_img)
 
-        if alpha: renpy.show("nvl_full", tag="alpha")
+        # if full_overlay:
+        #     renpy.hide_screen("overlay") #check
+        #     renpy.hide("overlay") #check
+        #     renpy.show("nvl_full", tag="overlay")
 
         if bg_img == "paper_desk composite":
             # bg = "paper_desk composite"
             renpy.say(nb, txt)
         else:
+            renpy.hide_screen("narrator_overlay") #check
+            if full_overlay:
+                renpy.show_screen("narrator_full_overlay", _tag="narrator_overlay", txt=txt) #check
+            else:
+                renpy.show_screen("narrator_overlay", _tag="narrator_overlay", txt=txt)
+            # else: renpy.show_screen("narrator_overlay", txt=txt) #temporary with text not shown
+            # background 
+            # renpy.show("nvl_textbox", xalign=0.5)
+            # "gui/nvl_textbox.png" #test
             renpy.say(nw, txt)
+            # show a onlayer b behind c zorder d as e
+            # renpy.show("gui/nvl_textbox.png") #, layer="a", behind=["nw"]) #, zorder="d", tag="e")
 
 
     def clear():
         
         # _window_hide() #trans=fade)
         nvl_clear()
-        renpy.hide("alpha")
+        # renpy.with_statement(trans=dissolve)
+        # renpy.show("bg black") #?
+        renpy.hide_screen("narrator_overlay") #check
+        # renpy.hide("overlay")
         renpy.hide("bg")
+        # renpy.hide("narrator") #check
+        # renpy.show(bg, tag="bg")
+
+        renpy.show("bg black", tag="bg")
+        renpy.with_statement(trans=dissolve)
+
+        # renpy.call_screen("black")
         # renpy.hide_screen("bg")
         
         # renpy.with_statement(trans=fade)
@@ -203,72 +411,82 @@ init python:
         bg_img = None
 
 
-
-default 
+default abstract_quiz = True # False
+# $ abstract_quiz = False #True
 
 # The game starts here with the built-in `start` label:
 label start:
     # $ narrate("Welcome to the game, \"Will Tara Pass the Class?\"!  First, let's start with a brief quiz.", bg="paper_desk composite")
     # $ clear()
 
-    call screen quiz(
-        "You're teaching a course which has a few major projects. You observe that on the eve of a big research grant deadline that your student requests for extensions are piling up in your inbox. How do you manage the situation?", [
-        QuizItem("You have a clear sense of your priorities, and realize that you can't grant everyone extensions to their project. Plus, the deadline was known to students many weeks in advance. You send an announcement to the class saying they have an additional 24 hours to work on the project. ", ("timely", -1)),
-        QuizItem("Students have had ample time to plan around deadlines, but you empathize with the fact that sometimes things happen that are unexpected. While writing your grant draft, you answer student emails as they come to hear out what's causing them difficulty.", ("timely", 1))
-    ]) with fade
+    if abstract_quiz:
+        $ quizMenu("Imagine you're a tour guide leading a large group through a bustling city. As you walk, some members of the group start to lag behind due to unexpected distractions. How do you manage the situation?", [("Continue on the planned route", ("timely", -1)), ("Maintaining the pace for the majority", ("timely", 0)), ("Adjust your itinerary to accommodate the varying interests and needs of each member", ("timely", 1))])
 
-    # $ renpy.notify("timely: " + str(timely)) #remove #debug
+        $ quizMenu("Imagine you're on a journey through a dense forest with a companion. As you trek along, your friend encounters a barrier blocking their path, and they're unable to overcome it on their own. How do you respond to this situation?", [("Step in immediately, offering assistance and working together to overcome the obstacle", ("flexible", 1)),("Pause to assess the situation and consider seeking outside help", ("flexible", -1))]) 
 
-    call screen quiz(
-        "You notice that there's a student in your class who's struggling and not attending class consistently.\nYou want to reach out to the student to see if they're ok. So you...", [
-        QuizItem("You email the student and encourage them to come to office hours and remind them what time it is.", ("flexible", -1)),
-        QuizItem("You email the student and ask them to suggest a time that works for them, saying that your plans are flexible (they may not be).", ("flexible", 1))
-    ]) with fade
 
-    # $ renpy.notify("flexible: " + str(flexible)) #remove #debug
+        $ quizMenu("Imagine a nest of young birds perched high in a tree. You witness the mother pushing each of her chicks out of the nest. One bird seems reluctant to leave the safety of the nest, while the others eagerly practice spreading their wings. How do you interpret this situation?", [("You believe that the anxious bird must be nudged out of the nest to learn to fly", ("teach", -1)), ("You believe there are other ways for it to develop the skills and confidence needed for flight", ("teach", 1))])
 
-    call screen quiz(
-        "Do you place an emphasis on learning or teaching experiences? For example, when a student is struggling, would you step in a bit later, to let the student \"figure it out\"?", [
-        QuizItem("Yes, tough love is indispensible.", ("teach", -1)),
-        QuizItem("No, what the hell.", ("teach", 1))
-    ]) with fade
+        # call screen quiz(
+        #     "Imagine you're a tour guide leading a large group through a bustling city. As you walk, some members of the group start to lag behind due to unexpected distractions. How do you manage the situation?", [
+        #     QuizItem("Continue on the planned route", ("timely", -1)),
+        #     QuizItem("Maintaining the pace for the majority", ("timely", 0)),
+        #     QuizItem("Adjust your itinerary to accommodate the varying interests and needs of each member", ("timely", 1))
+        # ]) with fade
+
+        # # $ renpy.notify("timely: " + str(timely)) #remove #debug
+
+        # call screen quiz(
+        #     "Imagine you're on a journey through a dense forest with a companion. As you trek along, your friend encounters a barrier blocking their path, and they're unable to overcome it on their own. How do you respond to this situation?", [
+        #     QuizItem("Step in immediately, offering assistance and working together to overcome the obstacle", ("flexible", 1)),
+        #     QuizItem("Pause to assess the situation and consider seeking outside help", ("flexible", -1))
+        # ]) with fade
+
+        # # $ renpy.notify("flexible: " + str(flexible)) #remove #debug
+
+        # call screen quiz(
+        #     "Imagine a nest of young birds perched high in a tree. You witness the mother pushing each of her chicks out of the nest. One bird seems reluctant to leave the safety of the nest, while the others eagerly practice spreading their wings. How do you interpret this situation?", [
+        #     QuizItem("You believe that the anxious bird must be nudged out of the nest to learn to fly", ("teach", -1)),
+        #     QuizItem("You believe there are other ways for it to develop the skills and confidence needed for flight", ("teach", 1))
+        # ]) with fade
+    else:
+        call screen quiz(
+            "You're teaching a course which has a few major projects. You observe that on the eve of a big research grant deadline that your student requests for extensions are piling up in your inbox. How do you manage the situation?", [
+            QuizItem("You have a clear sense of your priorities, and realize that you can't grant everyone extensions to their project. Plus, the deadline was known to students many weeks in advance. You send an announcement to the class saying they have an additional 24 hours to work on the project. ", ("timely", -1)),
+            QuizItem("Students have had ample time to plan around deadlines, but you empathize with the fact that sometimes things happen that are unexpected. While writing your grant draft, you answer student emails as they come to hear out what's causing them difficulty.", ("timely", 1))
+        ]) with fade
+
+        # $ renpy.notify("timely: " + str(timely)) #remove #debug
+
+        call screen quiz(
+            "You notice that there's a student in your class who's struggling and not attending class consistently.\nYou want to reach out to the student to see if they're ok. So you...", [
+            QuizItem("You email the student and encourage them to come to office hours and remind them what time it is.", ("flexible", -1)),
+            QuizItem("You email the student and ask them to suggest a time that works for them, saying that your plans are flexible (they may not be).", ("flexible", 1))
+        ]) with fade
+
+        # $ renpy.notify("flexible: " + str(flexible)) #remove #debug
+
+        call screen quiz(
+            "Do you place an emphasis on learning or teaching experiences? For example, when a student is struggling, would you step in a bit later, to let the student \"figure it out\"?", [
+            QuizItem("Yes, tough love is indispensible.", ("teach", -1)),
+            QuizItem("No, what the hell.", ("teach", 1))
+        ]) with fade
 
     # $ renpy.notify("teach: " + str(teach)) #remove #debug
 
-    # =====
-
-    call screen quiz(
-        "Imagine you're a tour guide leading a large group through a bustling city. As you walk, some members of the group start to lag behind due to unexpected distractions. How do you manage the situation?", [
-        QuizItem("Continue on the planned route", ("timely", -1)),
-        QuizItem("Maintaining the pace for the majority", ("timely", 0)),
-        QuizItem("Adjust your itinerary to accommodate the varying interests and needs of each member", ("timely", 1))
-    ]) with fade
-
-    # $ renpy.notify("timely: " + str(timely)) #remove #debug
-
-    call screen quiz(
-        "Imagine you're on a journey through a dense forest with a companion. As you trek along, your friend encounters a barrier blocking their path, and they're unable to overcome it on their own. How do you respond to this situation?", [
-        QuizItem("Step in immediately, offering assistance and working together to overcome the obstacle", ("flexible", 1)),
-        QuizItem("Pause to assess the situation and consider seeking outside help", ("flexible", -1))
-    ]) with fade
-
-    # $ renpy.notify("flexible: " + str(flexible)) #remove #debug
-
-    call screen quiz(
-        "Imagine a nest of young birds perched high in a tree. You witness the mother pushing each of her chicks out of the nest. One bird seems reluctant to leave the safety of the nest, while the others eagerly practice spreading their wings. How do you interpret this situation?", [
-        QuizItem("You believe that the anxious bird must be nudged out of the nest to learn to fly", ("teach", -1)),
-        QuizItem("You believe there are other ways for it to develop the skills and confidence needed for flight", ("teach", 1))
-    ]) with fade
+    
 
     # $ renpy.notify("teach: " + str(teach)) #remove #debug
     
     $ narrate("Thanks for answering! Let's begin.", bg="paper_desk composite")
 
-    show tara outside university as bg
+    $ choiceMenu([("Start Game", None)], bg="tara outside university", layout=ChoiceLayout(ypos=700))
 
-    menu:
-        "Start Game":
-            pass
+    # show tara outside university as bg
+
+    # menu:
+    #     "Start Game":
+    #         pass
     $ clear()
 
     # =====
@@ -324,12 +542,18 @@ label start:
     #================================
     # Here we use the `default` statement to initialize a flag containing information about a choice the player has made.  The `win` flag starts off initialized to the special value `False` (as with the rest of Ren'Py, capitalization matters), meaning that it is not set. If certain paths are chosen, we can set it to `True` using a Python assignment statement.
     default win = False
+    
+    # show bg white
+    # show screen narrator(nw, "You are a new instructor at the Carnegie Institute of Technology (CIT), teaching a course about research methods. The class is relatively large, which makes staying connected with individual students slightly more difficult. Because it is a required course for students at CIT, it is imperative that students pass your class so they can advance in their degree program.")
+
+    # pause
+
 
     # show screen choice_list(opts)
 
     $ narrate("You are a new instructor at the Carnegie Institute of Technology (CIT), teaching a course about research methods. The class is relatively large, which makes staying connected with individual students slightly more difficult. Because it is a required course for students at CIT, it is imperative that students pass your class so they can advance in their degree program.", bg="university")
 
-    $ narrate("\nYou're excited to embark on your teaching journey and are still learning about the different offices and resources that the university has to offer, including their Office of Disability Resources (ODR).", alpha=True)
+    $ narrate("\nYou're excited to embark on your teaching journey and are still learning about the different offices and resources that the university has to offer, including their Office of Disability Resources (ODR).", full_overlay=True)
 
     
     $ clear()
@@ -352,12 +576,11 @@ label start:
 
 
     $ clear()
-
     # The call screen statement shows a screen, and then hides it again at the end of the current interaction. If the screen returns a value, then the value is placed in the global _return variable.
     call screen choose([
         ChoiceItem("You can't afford any distractions. The grant is too important, and Tara needs to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "storm"), #done
         ChoiceItem("You decide to schedule a Zoom meeting with Tara to coordinate with them.", "Zoom"), # here, backslashes are used to escape double quotes in the statement #done ish #?
-        ChoiceItem("You respond to Tara's email directing her to reach out to the Office of Disability Resources (ODR) for further accommodation requests.", "ODR")
+        ChoiceItem("You respond to Tara's email directing her to reach out to the Office of Disability Resources (ODR) for further accommodation requests.", "TODO") #TODO figure out where this goes
     ]) with fade
 
     label storm:
@@ -373,7 +596,7 @@ label start:
         $ clear()
         $ narrate("The storm after the calm. Your office becomes a reflection of the turmoil brewing outside it.", bg="professor office storm")
 
-        $ narrate("\nIn the wake of your decision to prioritize the grant proposal over Tara's request, the ripples of consequence begin to surface.", alpha=True)
+        $ narrate("\nIn the wake of your decision to prioritize the grant proposal over Tara's request, the ripples of consequence begin to surface.", full_overlay=True)
 
         $ narrate("\nWord spreads through the student community, and your inbox is now a testament to the oversight - a barrage of emails from the Office of Disability Resources (ODR), expressing concerns over your inaction.")
 
@@ -407,7 +630,7 @@ label start:
         $ clear()
         $ narrate("Tara sees your email and decides to give up completely. Tara stops submitting classwork and eventually is able to get special permissions to withdraw from your course.", bg="student sad bed")
 
-        $ narrate("\nTara does not pass the class.", alpha=True)
+        $ narrate("\nTara does not pass the class.", full_overlay=True)
 
         jump game_end
     
@@ -455,7 +678,7 @@ label start:
         $ clear()
         $ narrate("Tara responds with an appreciative and honest email. Tara was states that they were optimistic that they could overcome these obstacles, but they've never had to get academic accommodations before, and it wasn't as easy as they thought it would be.", bg="student ponder computer")
 
-        $ narrate("\nAll Tara had heard from other students with accommodations were horror stories about professors expecting them to function highly and blaming them for their difficulties.  Tara apologizes for assuming you would do the same, and ask where you think they should go from here.", alpha=True)
+        $ narrate("\nAll Tara had heard from other students with accommodations were horror stories about professors expecting them to function highly and blaming them for their difficulties.  Tara apologizes for assuming you would do the same, and ask where you think they should go from here.", full_overlay=True)
 
         $ narrate("\nBased on this email you contemplate then decide:")
 
@@ -540,13 +763,13 @@ label start:
         $ narrate("Tara has never worked with ODR and get nervous, and begin to fall behind in your class.", bg="student sad dorm computer")
 
         $ clear()
-        $ narrate("After a week of missed classes Tara finally goes to ODR but is told accommodations are not \"retro-active.\" This now means that the situation is out of ODR's and that the student must reach out to you again.", bg="student meeting")
+        $ narrate("After a week of missed classes Tara finally goes to ODR but is told accommodations are not \"retro-active.\" This now means that the situation is out of ODR's and that the student must reach out to you again.", bg="student odr meeting")
 
         $ clear()
         $ narrate("As your work begins to pile up, you sit at the La Prima in Gates drinking tea and contemplate your next move:", bg="professor tea contemplating") 
 
         call screen choose([
-            ChoiceItem("The student sends another email explaining their situation & requesting some kind of help.", "TODO") #?
+            ChoiceItem("The student sends another email explaining their situation & requesting some kind of help.", "TODO") #? #beep
         ]) with fade
 
     label TODO:
