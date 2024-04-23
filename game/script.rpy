@@ -262,6 +262,8 @@ label start:
     
     $ narrate("Thanks for answering! Let's begin.", bg="paper_desk composite")
 
+    show tara outside university as bg
+
     menu:
         "Start Game":
             pass
@@ -338,10 +340,10 @@ label start:
     $ narrate("You have a student named Tara in your class who has been promptly attending class and has a diligent work ethic. She has been keeping up with all of her assignments and has notably contributed to her team's progress on the project so far.", bg="student classroom")
     
     $ clear()
-    $ narrate("You’re sitting in your office in Scaife hall when you hear your laptop ping. An email notification breaks the silence of your concentration. It's a message from Tara explaining a situation and asking for help.", bg="professor office")
+    $ narrate("You're sitting in your office in Scaife hall when you hear your laptop ping. An email notification breaks the silence of your concentration. It's a message from Tara explaining a situation and asking for help.", bg="professor office")
 
     $ clear()
-    $ narrate("The email reads:", bg="laptop composite") #TODO: edit this to have new email text
+    $ narrate("The email reads:", bg="computer tara email") #"laptop composite") #TODO: edit this to have new email text
 
     $ clear()
     $ narrate("Tara's situation seems somewhat complex. You glance at the corner of your desk, where the grant proposal sits. There's a choice to be made...", bg="professor grant")
@@ -378,7 +380,7 @@ label start:
 
         $ clear()
 
-        $ narrate("\nSigh... this training seems like such a drag. I know all this stuff already, don't I? Maybe I'll put the grant proposal on hold for today and reach out to the student to discuss what would be helpful for them. It's not too late, right?", bg="odr email")
+        $ narrate("\nSigh... this training seems like such a drag. I know all this stuff already, don't I? Maybe I'll put the grant proposal on hold for today and reach out to the student to discuss what would be helpful for them. It's not too late, right?", bg="computer odr email")
 
         $ clear()
         call screen choose([
