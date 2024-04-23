@@ -542,11 +542,12 @@ label start:
         $ narrate("As your work begins to pile up, you sit at the La Prima in Gates drinking tea and contemplate your next move:", bg="professor tea contemplating") 
 
         call screen choose([
-            ChoiceItem("The student sends another email explaining their situation & requesting some kind of help.":, "TODO") #?
+            ChoiceItem("The student sends another email explaining their situation & requesting some kind of help.", "TODO") #?
         ]) with fade
 
     label TODO:
-        nvl clear
+        $ clear()
+        show bg white
         n "TODO: finish"
 
     label game_end:
