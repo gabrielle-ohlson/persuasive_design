@@ -1627,6 +1627,8 @@ style nvl_paper:
     min_width gui.nvl_thought_width
     textalign gui.nvl_thought_xalign
     layout ("subtitle" if gui.nvl_text_xalign else "tex")
+    #
+    ymaximum 1000 #^
 
 style nvl_shadow:
     xpos 410 #gui.nvl_thought_xpos

@@ -1,4 +1,14 @@
-﻿default preferences.skip_after_choices = True
+﻿# default preferences.skip_after_choices = True #?
+
+
+# Here we use the `default` statement to initialize a flag containing information about a choice the player has made.  The `tara_passes` flag starts off initialized to the special value `False` (as with the rest of Ren'Py, capitalization matters), meaning that it is not set. If certain paths are chosen, we can set it to `True` using a Python assignment statement.
+default tara_passes = False
+
+default abstract_quiz = True # False
+# $ abstract_quiz = False #True
+
+default overlooked = False
+
 
 # screen whatever:
 #     on "show" action With(my_imagedissolve)
@@ -65,13 +75,10 @@ define nb = Character(None, kind=nvl, what_style="nvl_paper", what_color="#00000
 #     # etc etc
 
 
-style gamer:
-    size 120
-    color "#ffffff"
-    font "Orbitron-Black.ttf"
 
 
-image game_over = Text("GAME OVER", style="gamer")
+
+
 
 
 screen narrator_full_overlay(txt, **kwargs):
@@ -188,11 +195,11 @@ screen choice_list(opts):
                     textbutton caption action Jump(next_label)
 
 
-#remove #v
-default timely = 0
-default flexible = 0
-default teach = 0
-#^
+# #remove #v
+# default timely = 0
+# default flexible = 0
+# default teach = 0
+# #^
 
 # default character_stats.chloe_substore.friends = {"Eileen",}
 init python in quiz_attr:
@@ -204,6 +211,187 @@ init python in game_attr:
     timely = 0
     flexible = 0
     teach = 0
+
+
+
+style game_over:
+    size 120
+    color "#ffffff"
+    font "Orbitron-Black.ttf"
+    xfill True
+    yfill True
+
+
+style game_over_text:
+    size 120
+    color "#ffffff"
+    font "Orbitron-Black.ttf"
+    xalign 0.5
+    yalign 0.5
+
+# image game_over_alert = Text("GAME OVER", style="game_over")
+
+
+screen game_over:
+    zorder 99
+
+    style_prefix "game_over"
+
+    text "GAME OVER" #at truecenter
+
+style gamer:
+    size 120
+    color "#ffffff"
+    font "Orbitron-Black.ttf"
+
+style gamer_frame:
+    # our background picture
+    background "bg black"
+    # Frame(
+    #     "gui/nvl_textbox.png"
+    #     # left = Borders(0, 32, 0, 0)
+    #     # left = Borders(32, 33, 88, 80)
+    #     )
+
+    # These are the distance between the text area and frame outer edge
+    # left_padding 24
+    # top_padding 12 #22
+    # right_padding 23
+    # bottom_padding 73
+    # We *could* do all that in one line with
+    # padding (24, 22, 23, 73) # (left, top, right, base)
+
+    xalign 0.5
+    # minimum (121, 114) #?
+
+    # padding (40, 40)
+
+    
+
+    xsize 1920 # full width
+    ysize 1080
+
+    # Now the anchor (the pixel of this widget to place at the stated pos)
+    # This should generally reflect where the end of the tail lies
+    # anchor (0.5, 0.0) # (1.0, 1.0)
+    # # You could add a slight offset if wanted (so show_pos is on the tail)
+    # offset (12, 7)
+
+style gamer_grid:
+    # spacing 10
+    yspacing 16
+    xalign 0.5
+    xspacing 100
+
+style gamer_text:
+    
+    # xpos 410 #gui.nvl_thought_xpos
+    # xanchor gui.nvl_thought_xalign # 0.0
+    ypos 0 # gui.nvl_thought_ypos
+
+    # xalign 0.0
+    # xsize 1920
+    # xsize 1105 #1105 #gui.nvl_thought_width
+    # min_width 333 #gui.nvl_thought_width
+    
+    # textalign gui.nvl_thought_xalign
+    # layout ("subtitle" if gui.nvl_text_xalign else "tex")
+    
+    # font "Orbitron-Black.ttf"
+    font "Orbitron-VariableFont_wght.ttf"
+    ysize 1000
+    color "#ffffff"
+    size 40
+    # outlines [ (absolute(2), "#000", absolute(0), absolute(0)) ]
+
+
+# style gamer_grid:
+#     padding (100, 100)
+
+style attributes_text:
+    line_spacing 20
+
+
+screen attributes_info():
+    style_prefix "attributes"
+
+    # modal True
+
+    frame:
+        xfill True
+        yfill True
+        padding (40, 40)
+        # line_spacing 20
+
+        has vbox
+
+        # text "Remember that quiz you took at the beginning of the game?  Well, we kept track of your answers, and compared them to the choices you game throughout the game.  In particularly, we payed attention to the following attributes:"
+        # null height 30
+
+        # text "1. Do you respond in a {b}timely{/b} manner to students accommodations?"
+        # text "  - providing a good student experience vs. other work responsibilities"
+        # null height 24
+
+        # text "2. Approach to accommodations: official only or more {b}flexible{/b}?"
+        # text "  - handling situations yourself vs. reaching out for help"
+        # # you are with someone else hiking alone. They get stuck behind a barrier and can’t get out. Do you help them yourself or seek help?
+        # null height 24
+
+        # text "3. Do you believe in \"learning experiences\", or \"{b}teaching experiences{/b}\"?"
+        # text "  - metaphor: a bird will never learn to fly if it's not pushed out of it's nest... do you agree with this statement?"
+
+    # on "show" action NullAction()
+    # on "show" action Show("navigation")
+    # on "hide" action Hide("navigation")
+    # on "replaced" action Hide("attributes_info") #?
+
+screen game_score():
+    style_prefix "gamer"
+
+    frame:
+        style "gamer"
+
+        has vbox
+
+        null height 40
+        text "{instance=black}{size=+20}YOUR SCORES{/instance}{vspace=24}" xalign 0.5
+
+        frame:
+            xfill True
+            yfill True
+            
+            grid 3 4:
+            # grid 2 3:                
+                text "{instance=bold}{size=+10}{u}{i}Attribute{/i}{/u}{/instance}{vspace=+10}" #"Top-Left"
+                text "{instance=bold}{size=+10}{u}Quiz Score{/u}{/instance}{vspace=+10}" 
+                text "{instance=bold}{size=+10}{u}Game Score{/u}{/instance}{vspace=+10}" #"Top-Right"
+
+                # null height 0
+                # null height 0
+                # null height 0
+
+                text "{i}Timely{/i}" #"Top-Left"
+                text "%d" % quiz_attr.timely
+                text "%d" % game_attr.timely #"Top-Right"
+
+                text "{i}Flexible{/i}" #"Top-Left"
+                text "%d" % quiz_attr.flexible
+                text "%d" % game_attr.flexible #"Top-Right"
+
+                text "{i}Teaching Experiences{/i}" #xsize 400 #"Top-Left"
+                text "%d" % quiz_attr.teach
+                text "%d" % game_attr.teach #"Top-Right"
+
+            # text "Center-Left"
+            # text "Center-Right"
+
+            # text "Bottom-Left"
+            # text "Bottom-Right"
+
+    # style_prefix "score"
+
+
+# style narrator_frame:
 
 init python:
     # class Attributes:
@@ -219,9 +407,17 @@ init python:
         def __init__(self, caption, next_label=None, attr=None):
             self.caption = caption
             if next_label:
-                if attr is None: self.action = Jump(next_label)
-                else: self.action = Jump(next_label), IncrementVariable(attr[0], attr[1]) #check
-            else: self.action = Return(None) #equivalent of `pass`
+                self.action = Jump(next_label)
+                
+                # if attr is None: self.action = Jump(next_label)
+                # else: self.action = IncrementVariable(attr[0], attr[1]), Jump(next_label) #check
+            else:
+                self.action = Return(None) #equivalent of `pass`
+            #
+            if attr:
+                self.attr_action = IncrementVariable(attr[0], attr[1]) #check
+            else:
+                self.attr_action = NullAction()
 
     class QuizItem:
         def __init__(self, caption, attr=None):
@@ -241,6 +437,19 @@ screen black:
         xfill True
         yfill True
         background "bg black"
+
+
+screen background(bg):
+    tag bg
+
+    window: #?
+    # frame:
+        xfill True
+        yfill True
+        background bg
+
+    on "show" action Show("quick_menu") #?
+    on "hide" action Show("quick_menu") #?
 
 
 
@@ -273,13 +482,16 @@ screen choose(items, bg="bg desk", layout=ChoiceLayout()): #, y_align=0.5): #che
             # yalign 1.0 #y_align
             for i in items:
                 if i.action:
-                    textbutton i.caption action i.action
+                    if i.attr_action:
+                        textbutton i.caption action i.attr_action, i.action
+                    else:
+                        textbutton i.caption action i.action
                 else:
                     # textbutton i.caption action NullAction #check
                     text i.caption
 
-        on "show" action Show("navigation")
-        on "hide" action Hide("navigation")
+        # on "show" action Show("navigation") #?
+        # on "hide" action Hide("navigation") #?
 
 
 screen quiz(prompt, items, bg="bg black", layout=ChoiceLayout()): #TODO: layout stuff
@@ -320,8 +532,8 @@ screen quiz(prompt, items, bg="bg black", layout=ChoiceLayout()): #TODO: layout 
                 else:
                     text i.caption
 
-        on "show" action Show("navigation")
-        on "hide" action Hide("navigation")
+        # on "show" action Show("navigation") #?
+        # on "hide" action Hide("navigation") #?
 
 
 # screen narrator(what, bg="bg baclk"):
@@ -382,7 +594,7 @@ init python:
             if bg_img is not None:
                 # renpy.with_statement(trans=dissolve)
                 renpy.hide("bg")
-                renpy.show("bg black", tag="bg") #new #check
+                renpy.show_screen("background", _tag="bg", bg="bg black") #new #check
                 renpy.with_statement(trans=dissolve)
  
             renpy.show(bg, tag="bg")
@@ -394,18 +606,17 @@ init python:
         global bg_img
         #
         if bg is not None and (bg_img is None or bg_img != bg):
-            if bg_img is not None:
-                # renpy.with_statement(trans=dissolve)
-                renpy.hide("bg")
-                renpy.show("bg black", tag="bg") #new #check
-                renpy.with_statement(trans=dissolve)
+            # if bg_img is not None: #go back! #? #v
+            #     # renpy.hide("bg") #go back! #?
+            #     renpy.show_screen("background", _tag="bg", bg="bg black") #new #check
+            #     # renpy.show("bg black", tag="bg") #new #check  #go back! #?
+            #     renpy.with_statement(trans=dissolve) #^
  
-            renpy.show(bg, tag="bg")
-            renpy.with_statement(trans=fade) # fade)
+            renpy.show_screen("background", _tag="bg", bg=bg)
+            # renpy.with_statement(trans=fade)
             bg_img = bg
 
         if bg_img == "paper_desk composite":
-            # bg = "paper_desk composite"
             renpy.say(nb, txt)
         else:
             renpy.hide_screen("narrator_overlay") #check
@@ -416,27 +627,50 @@ init python:
             #
             renpy.say(nw, txt)
 
+    def gameScore():
+        # https://www.renpy.org/doc/html/transitions.html#dict-transitions
+        renpy.show_screen("attributes_info")
+
+        renpy.say(nb, "Remember that quiz you took at the beginning of the game?  Well, we kept track of your answers, and compared them to the choices you game throughout the game.  In particularly, we payed attention to the following attributes:\n")
+        # null height 30
+
+        renpy.say(nb, "\n1. Do you respond in a {b}timely{/b} manner to students accommodations?\n      - providing a good student experience vs. other work responsibilities")
+        # null height 24
+
+        renpy.say(nb, "\n2. Approach to accommodations: official only or more {b}flexible{/b}?\n      - handling situations yourself vs. reaching out for help")
+        # # you are with someone else hiking alone. They get stuck behind a barrier and can’t get out. Do you help them yourself or seek help?
+        # null height 24
+
+        renpy.say(nb, "\n3. Do you believe in \"learning experiences\", or \"{b}teaching experiences{/b}\"?\n      - metaphor: a bird will never learn to fly if it's not pushed out of it's nest... do you agree with this statement?")
+
+        renpy.hide_screen("attributes_info")
+
+        renpy.show_screen("game_score") #, _mode="nvl")
+        renpy.with_statement(trans=fade)
+
+        # renpy.show_screen("game_score")
+        renpy.pause()
+        renpy.hide_screen("game_score")
+        
+        #TODO: add screen with commentary of relative scores
+
 
     def clear():
-        
-        # _window_hide() #trans=fade)
         nvl_clear()
-        # renpy.with_statement(trans=dissolve)
-        # renpy.show("bg black") #?
-        renpy.hide_screen("narrator_overlay")
-        # renpy.hide("overlay")
-        renpy.hide("bg")
-        # renpy.hide("narrator") #check
-        # renpy.show(bg, tag="bg")
 
-        renpy.show("bg black", tag="bg")
+        renpy.hide_screen("narrator_overlay")
+
+        
+        # renpy.hide_screen("narrator_overlay")
+        # renpy.hide("bg")
+        # renpy.hide("bg")
+
+        renpy.hide_screen("bg")
         renpy.with_statement(trans=dissolve)
 
-        # renpy.call_screen("black")
-        # renpy.hide_screen("bg")
-        
-        # renpy.with_statement(trans=fade)
-        # _window_show(trans=fade)
+        # # renpy.show("bg black", tag="bg") #go back! #?
+        # renpy.show_screen("background", _tag="bg", bg="bg black") #new #check
+        # renpy.with_statement(trans=dissolve)
         #
         global bg_img
         bg_img = None
@@ -444,13 +678,7 @@ init python:
 
 
 
-# Here we use the `default` statement to initialize a flag containing information about a choice the player has made.  The `tara_passes` flag starts off initialized to the special value `False` (as with the rest of Ren'Py, capitalization matters), meaning that it is not set. If certain paths are chosen, we can set it to `True` using a Python assignment statement.
-default tara_passes = False
 
-default abstract_quiz = True # False
-# $ abstract_quiz = False #True
-
-default overlooked = False
 
 # The game starts here with the built-in `start` label:
 label start:
@@ -550,8 +778,6 @@ label start:
     # show bg white
     # show screen narrator(nw, "You are a new instructor at the Carnegie Institute of Technology (CIT), teaching a course about research methods. The class is relatively large, which makes staying connected with individual students slightly more difficult. Because it is a required course for students at CIT, it is imperative that students pass your class so they can advance in their degree program.")
 
-    # pause
-
 
     # show screen choice_list(opts)
 
@@ -609,7 +835,7 @@ label start:
         $ narrate("You stare at the screen, the ODR email open in front of you. Training modules on accommodating students feel like a chore, something you have convinced yourself you are beyond needing.", bg="professor office stare")
 
         $ clear()
-        $ narrate("\nSigh... this training seems like such a drag. I know all this stuff already, don't I?", bg="computer odr email")
+        $ narrate("Sigh... this training seems like such a drag. I know all this stuff already, don't I?", bg="computer odr email")
 
         $ narrate("\nMaybe I'll put the grant proposal on hold for today and reach out to the student to discuss what would be helpful for them. It's not too late, right?", full_overlay=True)
 
@@ -702,8 +928,8 @@ label start:
         $ narrate("At first it seems like Tara is catching up, but you later receive emails from their team members complaining that they haven't been doing their part in the project and have fallen off the grid. What should you do?", bg="team project")
 
         $ choiceMenu([
-            ("You reflect on why Tara hadn't reached out to you to ask for more support. You did everything you could to make them feel like they could still succeed, right? *You decide to email them to ask what went wrong.*", "honest"), #TODO: add bold formatting
-            ("*You tell the group to \"work it out between themselves\" -- it seems Tara is failing to communicate.* Collaboration is an important skill to have in academia, so the students could use the practice with resolving interpersonal conflict on their own. Besides, you've already done your part to support Tara.", "giveup", ("game_attr.teach", -1)) #TODO: add bold formatting
+            ("You reflect on why Tara hadn't reached out to you to ask for more support. You did everything you could to make them feel like they could still succeed, right? {b}You decide to email them to ask what went wrong.{/b}", "honest"), #TODO: add bold formatting
+            ("{b}You tell the group to \"work it out between themselves\" -- it seems Tara is failing to communicate.{/b} Collaboration is an important skill to have in academia, so the students could use the practice with resolving interpersonal conflict on their own. Besides, you've already done your part to support Tara.", "giveup", ("game_attr.teach", -1)) #TODO: add bold formatting
             # ChoiceItem("You send an email to Tara that reads, \"Hey Tara, It's difficult to see how you'll be able to hit the required learning goals for the course, so I may not be able to give you the grade you're looking for. Are you available during the summer? We could have you continue completing work then if you're willing to take an Incomplete for the course.\"", "summer")  #remove
         ])
 
@@ -717,7 +943,7 @@ label start:
         $ narrate("\nBased on this email you contemplate then decide...", full_overlay=True)
 
         $ clear()
-        $ choiceMenu([("You feel surprised by this email, and even a little offended. You wish students would give others a chance to help them, rather than ignoring emails and playing the victim last minute. This has clearly gotten out of hand and you feel awkward intervening at this point. You send Tara to ODR and suggest they either take an Incomplete or drop the class so they can focus on self-improvement.", "odr"), ("This email makes you think hard about your role as a professor and the dynamic at your university. You didn't know how unaccommodating professors have been, and you suspect you may have unknowingly made mistakes too. If you are a good person and just didn't know what to do, maybe there are other professors in the same position? You decide to organize a discussion and accessibility training for professors to share what you've learned.", "congrats")], layout=ChoiceLayout(ypos=500))
+        $ choiceMenu([("You feel surprised by this email, and even a little offended. You wish students would give others a chance to help them, rather than ignoring emails and playing the victim last minute. This has clearly gotten out of hand and you feel awkward intervening at this point. You send Tara to ODR and suggest they either take an Incomplete or drop the class so they can focus on self-improvement.", "odr"), ("This email makes you think hard about your role as a professor and the dynamic at your university. You didn't know how unaccommodating professors have been, and you suspect you may have unknowingly made mistakes too. If you are a good person and just didn't know what to do, maybe there are other professors in the same position? You decide to organize a discussion and accessibility training for professors to share what you've learned.", "congrats")], layout=ChoiceLayout(ypos=500)) #TODO: add attribute to first option
 
     label questioning: #remove #?
         $ clear()
@@ -809,7 +1035,7 @@ label start:
 
         $ clear()
         if overlooked:
-            $ choiceMenu([("You can't afford any distractions. The grant is too important, and students need to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "ghost", ("game_attr.timely", -1)), ("You relent, and agree to schedule a meeting with Tara to coordinate with them.", "zoom")]) #TODO: see if the loop into prev frame is on purpose
+            $ choiceMenu([("Now you {i}really{/i} can't afford any distractions, and Tara still needs to learn resilience. You ignore the email and get ready to finally finish the grant proposal.", "ghost", ("game_attr.timely", -1)), ("You relent, and agree to schedule a meeting with Tara to coordinate with them.", "zoom")]) #TODO: see if the loop into prev frame is on purpose
         else:
             $ choiceMenu([("You can't afford any distractions. The grant is too important, and students need to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "storm", ("game_attr.timely", -1)), ("You relent, and agree to schedule a meeting with Tara to coordinate with them.", "zoom")]) #TODO: see if the loop into prev frame is on purpose
 
@@ -831,30 +1057,22 @@ label start:
             $ clear()
             $ narrate("Tara does not pass the class.", "student fail")
 
-
-        # nvl clear #remove #v
-        # hide student
-        # hide professor
-
-        # $ clear()
-
-        # show bg white #?
-
-        # # Here we use a python `if` statement to check the flag and determine what text is displayed:
-        # if win: 
-        #     # We can also show text like an image with placement:
-        #     show text "GAME OVER - YOU WIN!" at truecenter
-        # else:
-        #     show text "GAME OVER - YOU LOSE!" at truecenter
-
-        # Have text display for just a second:
         $ renpy.hide_screen("narrator_overlay")
-        with dissolve
-        show game_over at truecenter
+
+        show screen game_over
+        # with fade
+
         pause
-        # pause 1
-        # hide text
-        # with dissolve #^
+ 
+        hide screen game_over
+        # with fade
+
+        # $ renpy.show_screen("background", _tag="bg", bg="bg black") #go back! #?
+
+        $ clear()
+        $ gameScore()
+        with fade
+        $ clear()
 
     # This return statement at the end of the `start` block ends the game:
     return
