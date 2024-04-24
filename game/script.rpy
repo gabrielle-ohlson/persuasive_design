@@ -188,10 +188,11 @@ screen choice_list(opts):
                     textbutton caption action Jump(next_label)
 
 
+#remove #v
 default timely = 0
 default flexible = 0
 default teach = 0
-
+#^
 
 # default character_stats.chloe_substore.friends = {"Eileen",}
 init python in quiz_attr:
@@ -441,8 +442,15 @@ init python:
         bg_img = None
 
 
+
+
+# Here we use the `default` statement to initialize a flag containing information about a choice the player has made.  The `tara_passes` flag starts off initialized to the special value `False` (as with the rest of Ren'Py, capitalization matters), meaning that it is not set. If certain paths are chosen, we can set it to `True` using a Python assignment statement.
+default tara_passes = False
+
 default abstract_quiz = True # False
 # $ abstract_quiz = False #True
+
+default overlooked = False
 
 # The game starts here with the built-in `start` label:
 label start:
@@ -538,8 +546,6 @@ label start:
     # $ achievement.clear_all()
 
     #================================
-    # Here we use the `default` statement to initialize a flag containing information about a choice the player has made.  The `win` flag starts off initialized to the special value `False` (as with the rest of Ren'Py, capitalization matters), meaning that it is not set. If certain paths are chosen, we can set it to `True` using a Python assignment statement.
-    default tara_passes = False
     
     # show bg white
     # show screen narrator(nw, "You are a new instructor at the Carnegie Institute of Technology (CIT), teaching a course about research methods. The class is relatively large, which makes staying connected with individual students slightly more difficult. Because it is a required course for students at CIT, it is imperative that students pass your class so they can advance in their degree program.")
@@ -561,7 +567,7 @@ label start:
     $ narrate("The semester is about two-thirds of the way through the course calendar. Students have already formed groups and gone through a couple of rounds of collaborative brainstorming to narrow down their specific topic and problem space. They are currently gearing up to build initial iterations of their prototype for testing.", bg="students working")
 
     $ clear()
-    $ narrate("You have a student named Tara in your class who has been promptly attending class and has a diligent work ethic. She has been keeping up with all of her assignments and has notably contributed to her team's progress on the project so far..", bg="student classroom")
+    $ narrate("You have a student named Tara in your class who has been promptly attending class and has a diligent work ethic. They have been keeping up with all of their assignments and has notably contributed to their team's progress on the project so far.", bg="student classroom")
     
     #--- Frame 57 ---
     $ clear()
@@ -578,6 +584,7 @@ label start:
     $ choiceMenu([("You can't afford any distractions. The grant is too important, and Tara needs to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "storm", ("game_attr.timely", -1)), ("You decide to schedule a Zoom meeting with Tara to coordinate with them.", "zoom"), ("You respond to Tara's email directing them to reach out to the Office of Disability Resources (ODR) for further accommodation requests.", "odr")]) # layout=ChoiceLayout(ypos=700))
 
     label storm:
+        $ overlooked = True
         #--- Frame 53 ---
         $ clear()
         $ narrate("When a student's outreach is not acknowledged, it could be perceived as a lack of support. Even if unable to grant the request, recognition of the student's effort to communicate can maintain a positive rapport and demonstrate that their concerns have been heard.", bg="tara")
@@ -602,7 +609,9 @@ label start:
         $ narrate("You stare at the screen, the ODR email open in front of you. Training modules on accommodating students feel like a chore, something you have convinced yourself you are beyond needing.", bg="professor office stare")
 
         $ clear()
-        $ narrate("\nSigh... this training seems like such a drag. I know all this stuff already, don't I? Maybe I'll put the grant proposal on hold for today and reach out to the student to discuss what would be helpful for them. It's not too late, right?", bg="computer odr email")
+        $ narrate("\nSigh... this training seems like such a drag. I know all this stuff already, don't I?", bg="computer odr email")
+
+        $ narrate("\nMaybe I'll put the grant proposal on hold for today and reach out to the student to discuss what would be helpful for them. It's not too late, right?", full_overlay=True)
 
         $ clear()
         $ choiceMenu([("Initiate a conversation with Tara as a way to right your wrongs.", "honest")])
@@ -615,8 +624,6 @@ label start:
         $ clear()
         $ showBg(bg="tara zoom")
         t "Thanks so much for meeting with me!"  #new #check
-
-        # $ narrate("She is optimistic that she can recover quickly in the next week.") #, bg="tara zoom")
 
         # $ renpy.hide_screen("narrator_overlay")
         t "I think I'll be able to catch up soon..." #new #check
@@ -791,7 +798,7 @@ label start:
         jump help_email
 
         # $ narrate("The student sends another email explaining their situation & requesting some kind of help.", bg="help_email")
-
+    
     label help_email:
         #--- Frame 77 ---
         $ clear()
@@ -801,7 +808,18 @@ label start:
         $ narrate("What do you do this time?", full_overlay=True)
 
         $ clear()
-        $ choiceMenu([("You can't afford any distractions. The grant is too important, and students need to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "storm", ("game_attr.timely", -1)), ("You relent, and agree to schedule a meeting with Tara to coordinate with them.", "zoom")]) #TODO: see if the loop into prev frame is on purpose
+        if overlooked:
+            $ choiceMenu([("You can't afford any distractions. The grant is too important, and students need to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "ghost", ("game_attr.timely", -1)), ("You relent, and agree to schedule a meeting with Tara to coordinate with them.", "zoom")]) #TODO: see if the loop into prev frame is on purpose
+        else:
+            $ choiceMenu([("You can't afford any distractions. The grant is too important, and students need to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "storm", ("game_attr.timely", -1)), ("You relent, and agree to schedule a meeting with Tara to coordinate with them.", "zoom")]) #TODO: see if the loop into prev frame is on purpose
+
+    label ghost:
+    #--- Frame 64 ---
+        $ clear()
+        $ narrate("Since Tara doesn't hear back from you, they decide to give up completely. Tara stops submitting classwork and eventually gets special permissions to withdraw from your course.", bg="student sad dorm computer")
+
+        $ tara_passes = False
+        jump game_end
 
     label game_end:
         $ clear()
@@ -840,3 +858,6 @@ label start:
 
     # This return statement at the end of the `start` block ends the game:
     return
+
+
+# there was one path I wasn't sure about -- the second time the prof thinks about the grant (Frame 78 on figma) that goes back to Frames 53/67 and I wasn't if it loops back to somewhere we've already been?
