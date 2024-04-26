@@ -1573,77 +1573,6 @@ define bubble.expand_area = {
 }
 
 
-#===============================================================================
-# ----------------------------------- CUSTOM -----------------------------------
-#===============================================================================
-# https://www.renpy.org/doc/html/style_properties.html#window-style-properties
-
-image bg black = "#000000"
-image bg white = "#ffffff"
-
-style bg_white is default
-
-style bg_white:
-    xfill True
-    yfill True
-    # background None #"gui/nvl.png" #new
-    
-    background "bg white"
-    padding gui.nvl_borders.padding
-
-image nvl_full = "gui/nvl.png"
-
-image nvl_textbox = "gui/nvl_textbox.png"
-
-
-image paper_desk composite = Composite(
-    (1920, 1080),
-    (0, 0), "bg wood",
-    (0, 0), "gui/nvl_paper.png"
-)
-
-# style bg_desk is default
-
-# #window:
-# style bg_desk:
-#     xfill True
-#     yfill True
-
-#     # background "paper_desk composite"
-
-#     # background "bg wood" 
-
-#     background "gui/nvl_paper.png"
-
-#     # foreground "gui/nvl_paper.png" # None #"bg wood" # None #"gui/nvl.png" #new
-#     padding gui.nvl_borders.padding
-
-#what:
-style nvl_paper:
-    xpos 410 #gui.nvl_thought_xpos
-    xanchor gui.nvl_thought_xalign # 0.0
-    ypos 0 # gui.nvl_thought_ypos
-    xsize 1105 #gui.nvl_thought_width
-    min_width gui.nvl_thought_width
-    textalign gui.nvl_thought_xalign
-    layout ("subtitle" if gui.nvl_text_xalign else "tex")
-    #
-    ymaximum 1000 #^
-
-style nvl_shadow:
-    xpos 410 #gui.nvl_thought_xpos
-    xanchor gui.nvl_thought_xalign # 0.0
-    ypos 0 # gui.nvl_thought_ypos
-    xsize 1105 #gui.nvl_thought_width
-    min_width gui.nvl_thought_width
-    textalign gui.nvl_thought_xalign
-    layout ("subtitle" if gui.nvl_text_xalign else "tex")
-    #
-    outlines [ (absolute(2), "#000", absolute(0), absolute(0)) ]
-
-    # background "gui/nvl_paper.png"
-
-
 ################################################################################
 ## Mobile Variants
 ################################################################################
@@ -1753,3 +1682,460 @@ style slider_slider:
     variant "small"
     xsize 900
 
+
+#===============================================================================
+# ----------------------------------- CUSTOM -----------------------------------
+#===============================================================================
+# https://www.renpy.org/doc/html/style_properties.html
+# https://www.renpy.org/doc/html/style_properties.html#window-style-properties
+
+image bg black = "#000000"
+image bg white = "#ffffff"
+
+style bg_white is default
+
+style bg_white:
+    xfill True
+    yfill True
+    # background None #"gui/nvl.png" #new
+    
+    background "bg white"
+    padding gui.nvl_borders.padding
+
+image nvl_full = "gui/nvl.png"
+
+image nvl_textbox = "gui/nvl_textbox.png"
+
+
+image paper_desk composite = Composite(
+    (1920, 1080),
+    (0, 0), "bg wood",
+    (0, 0), "gui/nvl_paper.png"
+)
+
+image laptop composite = Composite(
+    (1920, 1080),
+    (0, 0), "bg black",
+    (200, 100), "bg email"
+)
+
+#-------------------------------------------------------------------------------
+#what:
+style nvl_paper:
+    xpos 410 #gui.nvl_thought_xpos
+    xanchor gui.nvl_thought_xalign # 0.0
+    ypos 0 # gui.nvl_thought_ypos
+    xsize 1105 #gui.nvl_thought_width
+    min_width gui.nvl_thought_width
+    textalign gui.nvl_thought_xalign
+    layout ("subtitle" if gui.nvl_text_xalign else "tex")
+    #
+    ymaximum 1000 #^
+
+style nvl_shadow:
+    xpos 410 #gui.nvl_thought_xpos
+    xanchor gui.nvl_thought_xalign # 0.0
+    ypos 0 # gui.nvl_thought_ypos
+    xsize 1105 #gui.nvl_thought_width
+    min_width gui.nvl_thought_width
+    textalign gui.nvl_thought_xalign
+    layout ("subtitle" if gui.nvl_text_xalign else "tex")
+    #
+    outlines [ (absolute(2), "#000", absolute(0), absolute(0)) ]
+
+    # background "gui/nvl_paper.png"
+
+#--------------------------
+#--- BACKGROUND SCREENS ---
+#--------------------------
+screen black:
+    tag bg
+
+    window: #?
+    # frame:
+        xfill True
+        yfill True
+        background "bg black"
+
+screen background(bg):
+    tag bg
+
+    window: #?
+    # frame:
+        xfill True
+        yfill True
+        background bg
+
+    on "show" action Show("quick_menu") #?
+    on "hide" action Show("quick_menu") #?
+
+
+#-----------------------
+#--- NARRATOR SCREEN ---
+#-----------------------
+screen narrator_full_overlay(txt, **kwargs):
+    frame:
+        background "nvl_full"
+
+
+screen narrator_overlay(txt, **kwargs):
+    style_prefix "narrator" # This is actually passed through keywords
+    
+    fixed:
+        yanchor 0.0
+        xsize 1080
+        pos (0.0, 0.0) # Our x, y position, also through keywords
+        # pos (450, 320) # Our x, y position, also through keywords
+
+        frame:
+            text txt # "The Text" # Actually transcluded from the parent screen
+
+
+style narrator_frame:
+    # our background picture
+    background Frame(
+        "gui/nvl_textbox.png"
+        # left = Borders(0, 32, 0, 0)
+        # left = Borders(32, 33, 88, 80)
+        )
+
+    # These are the distance between the text area and frame outer edge
+    # left_padding 24
+    # top_padding 12 #22
+    # right_padding 23
+    # bottom_padding 73
+    # We *could* do all that in one line with
+    # padding (24, 22, 23, 73) # (left, top, right, base)
+
+    minimum (121, 114) #?
+
+    xsize 1920 # full width
+
+    # Now the anchor (the pixel of this widget to place at the stated pos)
+    # This should generally reflect where the end of the tail lies
+    anchor (0.0, 0.0) # (1.0, 1.0)
+    # # You could add a slight offset if wanted (so show_pos is on the tail)
+    # offset (12, 7)
+
+
+style narrator_text:
+    xpos 410 #gui.nvl_thought_xpos
+    xanchor gui.nvl_thought_xalign # 0.0
+    ypos 0 # gui.nvl_thought_ypos
+    xsize 1105 #1105 #gui.nvl_thought_width
+    min_width gui.nvl_thought_width
+    textalign gui.nvl_thought_xalign
+    layout ("subtitle" if gui.nvl_text_xalign else "tex")
+    #
+    # outlines [ (absolute(2), "#000", absolute(0), absolute(0)) ]
+    color "#ffffff00"
+    # outlines [ (absolute(2), "#000", absolute(0), absolute(0)) ]
+
+
+#---------------------
+#--- CHOOSE SCREEN ---
+#---------------------
+init python:
+    class ChoiceLayout:
+        def __init__(self, xalign=0.5, ypos=405, yanchor=0.5, spacing=33):
+            self.xalign = xalign
+            self.ypos = ypos
+            self.yanchor = yanchor
+            self.spacing = spacing #gui.choice_spacing
+
+screen choose(items, bg="bg desk", layout=ChoiceLayout()): #, y_align=0.5): #check
+    style_prefix "choice"
+
+    tag bg
+
+    window: #?
+    # frame:
+        xfill True
+        yfill True
+        background bg
+
+        vbox:
+            xalign layout.xalign
+            ypos layout.ypos
+            yanchor layout.yanchor
+            spacing layout.spacing
+            # yanchor .3
+            # yalign 1.0 #y_align
+            for i in items:
+                if i.action:
+                    if i.attr_action:
+                        textbutton i.caption action i.attr_action, i.action
+                    else:
+                        textbutton i.caption action i.action
+                else:
+                    # textbutton i.caption action NullAction #check
+                    text i.caption
+
+        # on "show" action Show("navigation") #?
+        # on "hide" action Hide("navigation") #?
+
+
+screen choice_list(opts):
+    style_prefix "choice_list"
+    frame:
+        area (10, 60, 200, 480)
+        viewport:
+            scrollbars "vertical"
+            mousewheel True
+            draggable True
+            vbox:
+                text "OPTIONS:"
+                for caption, next_label in opts.items():
+                    textbutton caption action Jump(next_label)
+
+
+#-------------------
+#--- QUIZ SCREEN ---
+#-------------------
+screen quiz(prompt, items, bg="bg black", layout=ChoiceLayout()): #TODO: layout stuff
+    style_prefix "choice"
+
+    tag bg
+
+    frame:
+        xfill True
+        yfill True
+        background bg
+
+        text prompt yalign 0.0 color "#fff"
+
+        vbox:
+            for i in items:
+                if i.action:
+                    textbutton i.caption:
+                        action i.action, Return(None)
+                else:
+                    text i.caption
+
+        # on "show" action Show("navigation") #?
+        # on "hide" action Hide("navigation") #?
+
+
+#-------------------------
+#--- GAME SCORE SCREEN ---
+#-------------------------
+screen game_score(): #TODO: deal with attr being defined
+    style_prefix "gamer"
+
+    frame:
+        style "gamer"
+
+        has vbox
+
+        null height 40
+        text "{instance=black}{size=+20}YOUR SCORES{/instance}{vspace=24}" xalign 0.5
+
+        frame:
+            xfill True
+            yfill True
+            
+            grid 3 4:
+            # grid 2 3:                
+                text "{instance=bold}{size=+10}{u}{i}Attribute{/i}{/u}{/instance}{vspace=+10}" #"Top-Left"
+                text "{instance=bold}{size=+10}{u}Quiz Score{/u}{/instance}{vspace=+10}" 
+                text "{instance=bold}{size=+10}{u}Game Score{/u}{/instance}{vspace=+10}" #"Top-Right"
+
+                # null height 0
+                # null height 0
+                # null height 0
+
+                text "{i}Timely{/i}" #"Top-Left"
+                text "%d" % quiz_attr.timely
+                text "%d" % game_attr.timely #"Top-Right"
+
+                text "{i}Flexible{/i}" #"Top-Left"
+                text "%d" % quiz_attr.flexible
+                text "%d" % game_attr.flexible #"Top-Right"
+
+                text "{i}Teaching Experiences{/i}" #xsize 400 #"Top-Left"
+                text "%d" % quiz_attr.teach
+                text "%d" % game_attr.teach #"Top-Right"
+
+            # text "Center-Left"
+            # text "Center-Right"
+
+            # text "Bottom-Left"
+            # text "Bottom-Right"
+
+    # style_prefix "score"
+
+
+style gamer:
+    size 120
+    color "#ffffff"
+    font "Orbitron-Black.ttf"
+
+style gamer_frame:
+    # our background picture
+    background "bg black"
+    # Frame(
+    #     "gui/nvl_textbox.png"
+    #     # left = Borders(0, 32, 0, 0)
+    #     # left = Borders(32, 33, 88, 80)
+    #     )
+
+    # These are the distance between the text area and frame outer edge
+    # left_padding 24
+    # top_padding 12 #22
+    # right_padding 23
+    # bottom_padding 73
+    # We *could* do all that in one line with
+    # padding (24, 22, 23, 73) # (left, top, right, base)
+
+    xalign 0.5
+    # minimum (121, 114) #?
+
+    # padding (40, 40)
+
+    
+
+    xsize 1920 # full width
+    ysize 1080
+
+    # Now the anchor (the pixel of this widget to place at the stated pos)
+    # This should generally reflect where the end of the tail lies
+    # anchor (0.5, 0.0) # (1.0, 1.0)
+    # # You could add a slight offset if wanted (so show_pos is on the tail)
+    # offset (12, 7)
+
+style gamer_grid:
+    # spacing 10
+    yspacing 16
+    xalign 0.5
+    xspacing 100
+
+style gamer_text:
+    
+    # xpos 410 #gui.nvl_thought_xpos
+    # xanchor gui.nvl_thought_xalign # 0.0
+    ypos 0 # gui.nvl_thought_ypos
+
+    # xalign 0.0
+    # xsize 1920
+    # xsize 1105 #1105 #gui.nvl_thought_width
+    # min_width 333 #gui.nvl_thought_width
+    
+    # textalign gui.nvl_thought_xalign
+    # layout ("subtitle" if gui.nvl_text_xalign else "tex")
+    
+    # font "Orbitron-Black.ttf"
+    font "Orbitron-VariableFont_wght.ttf"
+    ysize 1000
+    color "#ffffff"
+    size 40
+    # outlines [ (absolute(2), "#000", absolute(0), absolute(0)) ]
+
+
+# style gamer_grid:
+#     padding (100, 100)
+
+#-------------------------
+#--- ATTRIBUTES SCREEN ---
+#-------------------------
+screen attributes_info():
+    style_prefix "attributes"
+
+    # modal True
+
+    frame:
+        xfill True
+        yfill True
+        padding (40, 40)
+        # line_spacing 20
+
+        has vbox
+
+
+style attributes_text:
+    line_spacing 20
+
+
+#------------------------
+#--- GAME OVER SCREEN ---
+#------------------------
+screen game_over:
+    style_prefix "game_over"
+    zorder 99
+
+    text "GAME OVER" #at truecenter
+
+style game_over:
+    size 120
+    color "#ffffff"
+    font "Orbitron-Black.ttf"
+    xfill True
+    yfill True
+
+
+style game_over_text:
+    size 120
+    color "#ffffff"
+    font "Orbitron-Black.ttf"
+    xalign 0.5
+    yalign 0.5
+
+
+
+#---------------------------
+#--- ACHIEVEMENTS SCREEN ---
+#---------------------------
+
+
+screen achievements: #TODO: figure out what to do with this
+
+    # The background of the main menu.
+    window:
+        style "bg_white"
+    
+    grid 2 2:
+        # if achievement.has("test"):
+        #     image test_icon_granted
+        # else:
+        #     image test_icon_notgranted
+        #
+        if achievement.has("test"):
+            text "You got the Test Achievement!"
+        else:
+            text "Get this achievement by playing the game"
+
+        # if achievement.has("test4"):
+        #     image test_icon_granted
+        # else:
+        #     image test_icon_notgranted
+        #
+        if achievement.has("test4"):
+            text "You got the Test4 Achievement!"
+        else:
+            text "Get this achievement by clicking 4 times"
+
+
+
+# screen whatever:
+#     on "show" action With(my_imagedissolve)
+#     on "replace" action With(my_imagedissolve)
+
+
+
+# frame:
+#                 style_group "pref"
+#                 has vbox
+
+#                 textbutton _("Auto Read") action Preference("auto-forward", "toggle")
+#     # config.skipping
+
+
+# #TODO: https://www.renpy.org/doc/html/other.html
+# renpy.load_string(s, filename='<string>')link
+# Loads s as Ren'Py script that can be called.
+
+# Returns the name of the first statement in s.
+
+# filename is the name of the filename that statements in the string will appear to be from.
+
+
+# default character_stats.chloe_substore.friends = {"Eileen",}
