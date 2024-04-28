@@ -1,4 +1,9 @@
 ﻿# default preferences.skip_after_choices = True #?
+# # debug vars (TODO: #remove): #v
+# # https://www.renpy.org/doc/html/developer_tools.html
+# define config.developer = True
+# define config.log = "debug_log.txt"
+# # #^
 
 # Define the character variables:
 define s = Character("Student")
@@ -18,6 +23,8 @@ default abstract_quiz = True
 default overlooked = False
 
 #-------------------------------------------------------------------------------
+default active_attr = None
+#      
 init python in quiz_attr:
     timely = 0
     flexible = 0
@@ -29,28 +36,125 @@ init python in game_attr:
     teach = 0
 
 #-------------------------------------------------------------------------------
+# https://www.renpy.org/doc/html/config.html#var-config.label_callbacks
+init python:
+    class LabelInfo:
+        # def __init__(self, pos_msg, neg_msg, *attrs):
+        #     self.pos_msg = pos_msg
+        #     self.neg_msg = neg_msg
+        def __init__(self, attr_msgs): #msg, *attrs):
+            self.attrs = attr_msgs.keys()
+            self.msgs = attr_msgs
+
+            # if type(msg) == str:
+            #     self.pos_msg = msg
+            #     self.neg_msg = msg
+            # else:
+            #     self.pos_msg = msg[0]
+            #     self.neg_msg = msg[1]
+            # # self.msg = msg
+            # #
+            # self.attrs = attrs
+            # #
+            # # self.display = False
+            
+    
+    cb_lbls = {
+        "storm": LabelInfo({"timely": "Hmm... maybe you're not handling students' concerns in as timely of a manner as you may think..."}), # timely (Frame 80 / 78)
+        "zoom": LabelInfo({"timely": "Hey, nice work handling Tara's situation in a timely manner!"}), # timely (Frame 80 / 78)
+        "odr": LabelInfo({"timely": ["Okay, not a bad choice! Maybe you're more timely in handling students' concerns than you might expect.", "Not a bad choice, but maybe you're not handling students' concerns in as timely of a manner as you may think..."], "teach": "Hmm... maybe you are focusing a bit too much on \"learning experiences\" over \"teaching experiences\"..."}), # timely (Frame 80); teach (Frame 69)
+        "congrats": LabelInfo({"teach": "Great job! This is an excellent example of how important \"teaching experiences\" can be for the growth of students."}), # teach (Frame 69)
+        "ghost": LabelInfo({"timely": "Dang, students would really appreciate if you prioritized their needs over other important tasks every once in a while.\n\nIt might be worth it to consider keeping this in mind during time-management decisions in the future."}), # timely (Frame 78) #new text
+        "drop": LabelInfo({"flexible": "It is possible your flexibile and accommodating nature isn't being reflected in your interactions with students. Consider working together with the student to overcome their obstacles too!"}), # flexible (Frame 59)
+        "optimistic": LabelInfo({"flexible": ["Not a bad choice -- let's hope the student is comfortable sharing feedback that helps you learn how to better accommodate them!", "Not a bad choice, but remember, not all students will feel comfortable advocating for themselves in situations where they can't meet your optimistic expectations due to obstacles that are outside their control."]}), # flexible (Frame 59)
+        "rest": LabelInfo({"flexible": "Wow, great reccommendation! It seems you may be more flexible in your accommodations style than you think..."}), # flexible (Frame 59)
+        "c_grade": LabelInfo({"flexible": "Something to keep in mind -- just like an itinerary, syllabi can be adjusted to accommodate the varying interests and needs of each member of your class."}), # flexible (Frame 63)
+        "summer": LabelInfo({"flexible": "Hey, nice job accommodating this student's individual needs (it can be hard to think about a single person's experience when you're serving a majority, and I'm sure they really appreciate the extra effort.)"}), # flexible (Frame 63)
+        "honest": LabelInfo({"teach": "Fantastic choice! The best way to be a good teacher is to let your students {i}teach {u}you{/u}{/i} what they need to succeed."}), # teach (Frame 71)
+        "giveup": LabelInfo({"teach": "Yes, collaboration is an important skill for students to learn, but you gotta remember that students are all coming from a unique place, and might need some extra guidance to get to the place you expect them to be."}), # teach (Frame 71) #new text
+    }
+
+
+    def attrLabelCallback(name, called):
+        if name in cb_lbls:
+            v = getattr(store, "active_attr")
+            #
+            if v in cb_lbls[name].attrs and getattr(quiz_attr, v) != getattr(game_attr, v):
+                # renpy.show_screen("popup", message=cb_lbls[name].msg)
+
+                if getattr(game_attr, v) > getattr(quiz_attr, v):
+                    if type(cb_lbls[name].msgs[v]) == str:
+                        renpy.show_screen("popup", message=cb_lbls[name].msgs[v])
+                    else:
+                        renpy.show_screen("popup", message=cb_lbls[name].msgs[v][0])
+                    # renpy.show_screen("popup", message=cb_lbls[name].pos_msg)
+                else:
+                    if type(cb_lbls[name].msgs[v]) == str:
+                        renpy.show_screen("popup", message=cb_lbls[name].msgs[v])
+                    else:
+                        renpy.show_screen("popup", message=cb_lbls[name].msgs[v][1])
+                    # renpy.show_screen("popup", message=cb_lbls[name].neg_msg)
+
+            #     # cb_lbls[name].display = True
+            #     # setattr(store, "popup_msg", cb_lbls[name].message)
+            #     renpy.show_screen("popup", message=cb_lbls[name].message)
+            # # else:
+            # #     cb_lbls[name].display = False
+
+    
+    config.label_callbacks.append(attrLabelCallback)
+
+# # https://lemmasoft.renai.us/forums/viewtopic.php?t=26690
+# init -1 python: # -1 makes this the first thing run
+#     conflicting = {"timely": False, "flexible": False, "teach": False}
+#     #
+#     def gameAttrCallback():
+#         renpy.log("cb")
+#         # for q, g in zip(quiz_attr, game_attr):
+#         for v in conflicting.keys(): #["timely", "flexible", "teach"]:
+#         # for v in RestrictRanges_:
+#             conflicting[v] = (getattr(quiz_attr, v) != getattr(game_attr, v))
+#             renpy.log(f"v: {v}")
+#             renpy.log([hasattr(store, v), hasattr(quiz_attr, v), hasattr(game_attr, v)])
+
+#             renpy.log([getattr(quiz_attr, v), getattr(game_attr, v)])
+#             if hasattr(store, v):
+
+#                 val = getattr(store, v)
+#                 #
+#                 renpy.log("val:" + str(val))
+#                 renpy.log()
+#                 #
+#                 # # if val != getattr(store, )
+#                 # if val != getattr(quiz_attr, v):
+#                 #     setattr(store, "conflicting", True)
+#                 # else:
+#                 #     setattr(store, "conflicting", False)
+    
+#     config.python_callbacks.append(gameAttrCallback)
+
+
+#-------------------------------------------------------------------------------
 init python:
     class ChoiceItem:
         def __init__(self, caption, next_label=None, attr=None):
             self.caption = caption
             if next_label:
                 self.action = Jump(next_label)
-                
-                # if attr is None: self.action = Jump(next_label)
-                # else: self.action = IncrementVariable(attr[0], attr[1]), Jump(next_label) #check
             else:
                 self.action = Return(None) #equivalent of `pass`
             #
             if attr:
-                self.attr_action = IncrementVariable(attr[0], attr[1]) #check
+                self.attr = attr[0].split(".")[-1]
+                self.attr_action = IncrementVariable(attr[0], attr[1])
             else:
+                self.attr = None
                 self.attr_action = NullAction()
 
     class QuizItem:
         def __init__(self, caption, attr=None):
             self.caption = caption
             if attr: self.action = IncrementVariable(attr[0], attr[1])
-            # if quality: self.action = IncrementVariable(quality[0], quality[1])
             else: self.action = None
 
 
@@ -63,9 +167,9 @@ init python:
         #
         if bg is not None and (bg_img is None or bg_img != bg):
             if bg_img is not None:
-                # renpy.with_statement(trans=dissolve)
                 renpy.hide("bg")
-                renpy.show_screen("background", _tag="bg", bg="bg black") #new #check
+                #
+                renpy.show_screen("background", _tag="bg", bg="bg black") #check
                 renpy.with_statement(trans=dissolve)
  
             renpy.show(bg, tag="bg")
@@ -77,12 +181,6 @@ init python:
         global bg_img
         #
         if bg is not None and (bg_img is None or bg_img != bg):
-            # if bg_img is not None: #go back! #? #v
-            #     # renpy.hide("bg") #go back! #?
-            #     renpy.show_screen("background", _tag="bg", bg="bg black") #new #check
-            #     # renpy.show("bg black", tag="bg") #new #check  #go back! #?
-            #     renpy.with_statement(trans=dissolve) #^
- 
             renpy.show_screen("background", _tag="bg", bg=bg)
             # renpy.with_statement(trans=fade)
             bg_img = bg
@@ -99,26 +197,17 @@ init python:
             renpy.say(nw, txt)
 
 
-    def choiceMenu(items, bg="bg desk", layout=ChoiceLayout()): #choices is list of tuples 
+    def choiceMenu(items, bg="bg desk", layout=ChoiceLayout()): # `items` is list of tuples 
         if bg is not None and (bg_img is None or bg_img != bg):
-            # renpy.with_statement(trans=dissolve)
             renpy.hide("bg")
             renpy.show("bg black", tag="bg")
             renpy.with_statement(trans=dissolve)
 
-        # renpy.with_statement(trans=dissolve)
         renpy.call_screen("choose", _with_none=False, items=[ChoiceItem(*vals) for vals in items], bg=bg, layout=layout)
         renpy.with_statement(trans=fade)
 
 
     def quizMenu(prompt, items, bg="bg black", layout=ChoiceLayout()):
-        # if bg is not None and (bg_img is None or bg_img != bg):
-        #     renpy.hide("bg")
-        #     renpy.show("bg black", tag="bg")
-        #     renpy.with_statement(trans=dissolve)
-
-        # renpy.with_statement(trans=dissolve)
-
         # The call screen statement shows a screen, and then hides it again at the end of the current interaction. If the screen returns a value, then the value is placed in the global _return variable.
         renpy.call_screen("quiz", _with_none=False, prompt=prompt, items=[QuizItem(*vals) for vals in items], bg=bg, layout=layout)
         renpy.with_statement(trans=fade)
@@ -129,10 +218,8 @@ init python:
         renpy.show_screen("attributes_info")
 
         renpy.say(nb, "Remember that quiz you took at the beginning of the game?  Well, we kept track of your answers, and compared them to the choices you made throughout the game.  In particular, we payed attention to the following attributes:\n")
-        # null height 30
 
         renpy.say(nb, "\n1. Do you respond in a {b}timely{/b} manner to students accommodations?\n      - providing a good student experience vs. other work responsibilities")
-        # null height 24
 
         renpy.say(nb, "\n2. Approach to accommodations: official only or more {b}flexible{/b}?\n      - handling situations yourself vs. reaching out for help")
         # # you are with someone else hiking alone. They get stuck behind a barrier and can’t get out. Do you help them yourself or seek help?
@@ -142,10 +229,9 @@ init python:
 
         renpy.hide_screen("attributes_info")
 
-        renpy.show_screen("game_score") #, _mode="nvl")
+        renpy.show_screen("game_score")
         renpy.with_statement(trans=fade)
 
-        # renpy.show_screen("game_score")
         renpy.pause()
         renpy.hide_screen("game_score")
         
@@ -157,17 +243,12 @@ init python:
 
         renpy.hide_screen("narrator_overlay")
 
-        
-        # renpy.hide_screen("narrator_overlay")
-        # renpy.hide("bg")
-        # renpy.hide("bg")
-
         renpy.hide_screen("bg")
         renpy.with_statement(trans=dissolve)
 
         # # renpy.show("bg black", tag="bg") #go back! #?
-        # renpy.show_screen("background", _tag="bg", bg="bg black") #new #check
-        # renpy.with_statement(trans=dissolve)
+        # renpy.show_screen("background", _tag="bg", bg="bg black") #go back! #? #v
+        # renpy.with_statement(trans=dissolve) #^
         #
         global bg_img
         bg_img = None
@@ -214,67 +295,10 @@ label start:
     $ narrate("Thanks for answering! Let's begin the game and find out --\n\n\"Will Tara Pass the Class?\"", bg="paper_desk composite")
 
     $ clear()
-
     $ choiceMenu([("Start Game", None)], bg="tara outside university", layout=ChoiceLayout(ypos=700))
 
-    # show tara outside university as bg
-
-    # menu:
-    #     "Start Game":
-    #         pass
-    $ clear()
-
-    # =====
-    # show bg black
-
-    # $ achievement.grant("test")
-    # "I'm granting an achievement"
-
-    # if achievement.has("test"): #shows that achievement works
-    #     "And it worked!"
-    # else:
-    #     "But that didn't work."
-    
-    # # clear all of the user's achievements:
-    # $ achievement.clear_all()
-
-    # if not achievement.has("test4"):
-    #     $ achievement.clear("test4") # remove a specific achievement
-
-    # $ test_clicks = 0
-    # # default persistent.test_clicks = 0 #if want it to be persistent through playthroughs
-    # "Click this 4 times for another achievement"
-
-    # menu loop:
-    #     "Click!":
-    #         $ test_clicks += 1
-    #         # $ persistent.test_clicks += 1 #if want it to be persistent through playthroughs
-    #         $ achievement.progress("test4", test_clicks)
-    #         $ achievement.sync()
-    #         $ progress = achievement.get_progress("test4")
-    #         if progress == 1:
-    #             "You've clicked this [progress] time."
-    #         else:
-    #             "You've clicked this [progress] times."
-    #         if progress < 4:
-    #             jump loop
-    #     "No":
-    #         pass
-
-    # if achievement.has("test4"):
-    #     "You got the achievement!"
-    # else:
-    #     "You did not get the achievement."
-
-    # window hide
-    # show screen achievements #as A
-    # pause
-    # hide screen achievements # hide screen A
-
-    # # clear all of the user's achievements:
-    # $ achievement.clear_all()
-
     #================================
+    $ clear()
     $ narrate("You are a new instructor at the Carnegie Institute of Technology (CIT), teaching a course about research methods. The class is relatively large, which makes staying connected with individual students slightly more difficult. Because it is a required course for students at CIT, it is imperative that students pass your class so they can advance in their degree program.", bg="university")
 
     $ narrate("\nYou're excited to embark on your teaching journey and are still learning about the different offices and resources that the university has to offer, including their Office of Disability Resources (ODR).", full_overlay=True)
@@ -301,7 +325,7 @@ label start:
     $ narrate("Tara's situation seems somewhat complex. You glance at the corner of your desk, where the grant proposal sits. There's a choice to be made...", bg="professor grant")
 
     $ clear()
-    $ choiceMenu([("You can't afford any distractions. The grant is too important, and Tara needs to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "storm", ("game_attr.timely", -1)), ("You decide to schedule a Zoom meeting with Tara to coordinate with them.", "zoom", ("game_attr.timely", 1)), ("You respond to Tara's email directing them to reach out to the Office of Disability Resources (ODR) for further accommodation requests.", "odr", ("game_attr.timely", 0))]) # layout=ChoiceLayout(ypos=700)) #TODO: check if correct positive attributes
+    $ choiceMenu([("You can't afford any distractions. The grant is too important, and Tara needs to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "storm", ("game_attr.timely", -1)), ("You decide to schedule a Zoom meeting with Tara to coordinate with them.", "zoom", ("game_attr.timely", 1)), ("You respond to Tara's email directing them to reach out to the Office of Disability Resources (ODR) for further accommodation requests.", "odr", ("game_attr.timely", 0))]) #TODO: check if correct positive attributes
 
     label storm:
         $ overlooked = True
@@ -318,7 +342,7 @@ label start:
 
         #--- Frame 67 ---
         $ clear()
-        $ narrate("The calm before the storm. Your office becomes a reflection of the turmoil brewing outside it.", bg="professor office storm") #TODO: determine if should be "calm after the storm" or not
+        $ narrate("The calm before the storm. Your office becomes a reflection of the turmoil brewing outside it.", bg="professor office storm")
 
         $ narrate("\nIn the wake of your decision to prioritize the grant proposal over Tara's request, the ripples of consequence begin to surface.", full_overlay=True)
 
@@ -417,6 +441,7 @@ label start:
         $ clear()
         $ narrate("At first it seems like Tara is catching up, but you later receive emails from their team members complaining that they haven't been doing their part in the project and have fallen off the grid. What should you do?", bg="team project")
 
+        $ clear()
         $ choiceMenu([
             ("You reflect on why Tara hadn't reached out to you to ask for more support. You did everything you could to make them feel like they could still succeed, right? {b}You decide to email them to ask what went wrong.{/b}", "honest", ("game_attr.teach", 1)),
             ("{b}You tell the group to \"work it out between themselves\" -- it seems Tara is failing to communicate.{/b} Collaboration is an important skill to have in academia, so the students could use the practice with resolving interpersonal conflict on their own. Besides, you've already done your part to support Tara.", "giveup", ("game_attr.teach", -1))
@@ -525,9 +550,9 @@ label start:
 
         $ clear()
         if overlooked:
-            $ choiceMenu([("Now you {i}really{/i} can't afford any distractions, and Tara still needs to learn resilience. You ignore the email and get ready to finally finish the grant proposal.", "ghost", ("game_attr.timely", -1)), ("You relent, and agree to schedule a meeting with Tara to coordinate with them.", "zoom", ("game_attr.timely", 0))])
+            $ choiceMenu([("Now you {i}really{/i} can't afford any distractions, and Tara still needs to learn resilience. You ignore the email and get ready to finally finish the grant proposal.", "ghost", ("game_attr.timely", -1)), ("You relent, and agree to schedule a meeting with Tara to coordinate with them.", "zoom", ("game_attr.timely", 1))])
         else:
-            $ choiceMenu([("You can't afford any distractions. The grant is too important, and students need to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "storm", ("game_attr.timely", -1)), ("You relent, and agree to schedule a meeting with Tara to coordinate with them.", "zoom", ("game_attr.timely", 0))])
+            $ choiceMenu([("You can't afford any distractions. The grant is too important, and students need to learn resilience. You ignore the email and turn your attention back to the grant proposal.", "storm", ("game_attr.timely", -1)), ("You relent, and agree to schedule a meeting with Tara to coordinate with them.", "zoom", ("game_attr.timely", 1))])
 
     label ghost:
     #--- Frame 64 ---
