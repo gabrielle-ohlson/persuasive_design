@@ -312,13 +312,13 @@ label start:
         $ renpy.hide_screen("narrator_overlay")
         t "I feel like my efforts to communicate my situation was overlooked."
         
-        t "An acknowledgement would have helped me have some sort of trust in the support system here at ICT..."
+        t "An acknowledgement would have helped me have some sort of trust in the support system here at CIT..."
 
         t "I feel like my voice in this institution doesn't even matter."
 
         #--- Frame 67 ---
         $ clear()
-        $ narrate("The storm after the calm. Your office becomes a reflection of the turmoil brewing outside it.", bg="professor office storm") #TODO: determine if should be "calm after the storm" or not
+        $ narrate("The calm before the storm. Your office becomes a reflection of the turmoil brewing outside it.", bg="professor office storm") #TODO: determine if should be "calm after the storm" or not
 
         $ narrate("\nIn the wake of your decision to prioritize the grant proposal over Tara's request, the ripples of consequence begin to surface.", full_overlay=True)
 
