@@ -2082,66 +2082,6 @@ style game_over_text:
     yalign 0.5
 
 
-
-#---------------------------
-#--- ACHIEVEMENTS SCREEN ---
-#---------------------------
-screen achievements: #TODO: figure out what to do with this
-
-    # The background of the main menu.
-    window:
-        style "bg_white"
-    
-    grid 2 2:
-        # if achievement.has("test"):
-        #     image test_icon_granted
-        # else:
-        #     image test_icon_notgranted
-        #
-        if achievement.has("test"):
-            text "You got the Test Achievement!"
-        else:
-            text "Get this achievement by playing the game"
-
-        # if achievement.has("test4"):
-        #     image test_icon_granted
-        # else:
-        #     image test_icon_notgranted
-        #
-        if achievement.has("test4"):
-            text "You got the Test4 Achievement!"
-        else:
-            text "Get this achievement by clicking 4 times"
-
-
-
-# screen whatever:
-#     on "show" action With(my_imagedissolve)
-#     on "replace" action With(my_imagedissolve)
-
-
-
-# frame:
-#                 style_group "pref"
-#                 has vbox
-
-#                 textbutton _("Auto Read") action Preference("auto-forward", "toggle")
-#     # config.skipping
-
-
-# #TODO: https://www.renpy.org/doc/html/other.html
-# renpy.load_string(s, filename='<string>')link
-# Loads s as Ren'Py script that can be called.
-
-# Returns the name of the first statement in s.
-
-# filename is the name of the filename that statements in the string will appear to be from.
-
-
-# default character_stats.chloe_substore.friends = {"Eileen",}
-
-
-
 #--------------------------------
 #--- ATTRIBUTES POP-UP SCREEN ---
 #--------------------------------
@@ -2160,8 +2100,6 @@ style popup:
     ypos 0
 
 
-
-
 style popup_text:
     color "#000000"
 
@@ -2171,21 +2109,8 @@ screen popup(message):
 
     style_prefix "popup"
 
-    # This controls how long it takes between when the screen is
-    # first shown, and when it begins hiding.
-    # add "gui/overlay/confirm.png"
-
-    # imagemap:
-    #     style "popup"
-
-    #     ground "bg transparent"
-
-    #     # (x, y, width, height) tuple giving the area of the imagemap that makes up the button. It also takes the following properties:
-    #     hotspot (0, 0, 1920, 1080) action Hide("popup") alt _("Continue")
-
     frame:
         background Frame([ "gui/confirm_frame.png", "gui/frame.png"], gui.confirm_frame_borders, tile=gui.frame_tile)
-        # padding gui.confirm_frame_borders.padding
         xalign 0.5
         yalign 0.5
 
@@ -2193,7 +2118,6 @@ screen popup(message):
 
         top_padding 30
         bottom_padding 60
-        # padding (0,0)
 
         vbox:
             xalign 0.5
@@ -2212,12 +2136,6 @@ screen popup(message):
                 style "confirm_prompt"
                 xalign 0.5
 
-            # hbox:
-            #     xalign 0.5
-            #     spacing 150
-
-            #     textbutton "Close" action Hide("popup") xalign 0.5 yalign 0.5 # Return()
-
     key "game_menu" action Hide("popup") #right click
     key "dismiss" action Hide("popup") #left click
 
@@ -2231,91 +2149,3 @@ transform _popup_transform:
         linear .25 alpha 1.0
     on hide:
         linear .5 alpha 0.0
-    # on return:
-    #     linear .5 alpha 0.0
-
-
-
-
-
-
-
-
-screen popup_confirm(message, yes_action=Return(), no_action=Return()):
-
-    modal True
-
-    window:
-        style "gm_root"
-
-    frame:
-        style_prefix "confirm"
-
-        xfill True
-        xmargin 50
-        ypadding 25
-        yalign .25
-
-        vbox:
-            xfill True
-            spacing 25
-
-            text _(message):
-                textalign 0.5
-                xalign 0.5
-
-            hbox:
-                spacing 100
-                xalign .5
-                textbutton _("Yes") action yes_action
-                textbutton _("No") action no_action
-
-
-screen popup_guide(message):
-    # modal True
-
-    frame:
-        xalign 0.5
-        yalign 0.5
-        xsize 500
-
-        vbox: 
-            text message at _popup_transform2
-            # text message
-            text ""
-            button:
-                text "Close"
-                action Hide("popup_guide") #Return()
-
-
-screen popup_tip(message):
-    drag:
-        drag_name "popup"
-        xalign 0.5
-        yalign 0.5
-        drag_handle (0, 0, 1.0, 1.0)
-
-        frame:
-            xmaximum 600
-            xpadding 30
-            ypadding 30
-
-            has vbox
-            label "Hint" xminimum 400
-            text message
-            textbutton "Exit" action Return()
-
-
-
-screen popup_ctc(message=None):
-
-    zorder 100
-
-    hbox:
-        xalign 0.98
-        yalign 0.98
-
-        add Text(message)
-
-        text _("Click to Continue"):
-            size 12
